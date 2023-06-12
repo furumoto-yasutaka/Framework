@@ -41,13 +41,13 @@ public:
 		// ”wŒi
 		obj = AddGameObject("BackGround");
 		obj->AddComponent<Plate2DRenderer>()->Init("White",
-			{ WINDOW_RESOLUTION_WIDTH, WINDOW_RESOLUTION_HEIGHT },
+			{ Application::m_WINDOW_RESOLUTION.x, Application::m_WINDOW_RESOLUTION.y },
 			Plate2DRenderer::AnchorPosition::Left_Top);
 
 		// ŠJ”­ƒƒS
 		obj = AddGameObject("DevelopLogo");
 		obj->m_LocalPosition =
-			{ WINDOW_RESOLUTION_WIDTH * 0.5f, WINDOW_RESOLUTION_HEIGHT * 0.5f, 0.0f };
+			{ Application::m_WINDOW_RESOLUTION.x * 0.5f, Application::m_WINDOW_RESOLUTION.y * 0.5f, 0.0f };
 		obj->AddComponent<Plate2DRenderer>()->Init("DevelopLogo",
 			{ 300.0f, 300.0f }, Plate2DRenderer::AnchorPosition::Center_Middle);
 

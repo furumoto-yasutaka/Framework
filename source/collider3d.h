@@ -46,9 +46,9 @@ protected:
 	D3DXVECTOR3* m_VelocityRef = NULL;	// 衝突を速度に反映させる為の参照
 	float m_Damp = 0.0f;				// 衝突時の反射係数
 
-	CallBackBase<Collider3D*>* m_OnContactEnter = NULL;	// 接触開始フレームのコールバック関数
-	CallBackBase<Collider3D*>* m_OnContactStay = NULL;	// 接触中のコールバック関数
-	CallBackBase<Collider3D*>* m_OnContactExit = NULL;	// 接触終了フレームのコールバック関数
+	CallbackBase<Collider3D*>* m_OnContactEnter = NULL;	// 接触開始フレームのコールバック関数
+	CallbackBase<Collider3D*>* m_OnContactStay = NULL;	// 接触中のコールバック関数
+	CallbackBase<Collider3D*>* m_OnContactExit = NULL;	// 接触終了フレームのコールバック関数
 
 public:
 	Collider3D(GameObject* attachObject, ColliderId id)
@@ -72,27 +72,27 @@ public:
 	virtual D3DXVECTOR3 GetMortonMinPos() = 0;
 	virtual D3DXVECTOR3 GetMortonMaxPos() = 0;
 
-	void CheckCallBack();
+	void CheckCallback();
 
 	// 接触開始フレームのコールバック関数を登録
 	template<class T>
 	void SetOnContactEnter(T* origin, void(T::* function)(Collider3D*))
 	{
-		m_OnContactEnter = DBG_NEW CallBack(origin, function);
+		m_OnContactEnter = DBG_NEW Callback(origin, function);
 	}
 
 	// 接触中のコールバック関数を登録
 	template<class T>
 	void SetOnContactStay(T* origin, void(T::* function)(Collider3D*))
 	{
-		m_OnContactStay = DBG_NEW CallBack(origin, function);
+		m_OnContactStay = DBG_NEW Callback(origin, function);
 	}
 
 	// 接触終了フレームのコールバック関数を登録
 	template<class T>
 	void SetOnContactExit(T* origin, void(T::* function)(Collider3D*))
 	{
-		m_OnContactExit = DBG_NEW CallBack(origin, function);
+		m_OnContactExit = DBG_NEW Callback(origin, function);
 	}
 
 	void CallOnContactEnter(Collider3D* collider);

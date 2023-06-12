@@ -374,6 +374,7 @@
     <ClInclude Include="source\savedataManager.h" />
     <ClInclude Include="source\scene.h" />
     <ClInclude Include="source\notDrawComponent.h" />
+    <ClInclude Include="source\singleton.h" />
     <ClInclude Include="source\skyDome.h" />
     <ClInclude Include="source\sphereCollider3d.h" />
     <ClInclude Include="source\cameraComponent.h" />

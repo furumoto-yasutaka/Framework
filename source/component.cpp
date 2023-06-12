@@ -33,10 +33,10 @@ void Component::Destroy()
 void Component::CheckInvoke()
 {
 	m_InvokeList.remove_if(
-		[](CallBackInvokeBase* c) { return c->CheckTime(); });
+		[](CallbackInvokeBase* c) { return c->CheckTime(); });
 }
 
-void Component::DeleteInvoke(CallBackInvokeBase* instance)
+void Component::DeleteInvoke(CallbackInvokeBase* instance)
 {
 	m_InvokeList.remove(instance);
 }
@@ -82,7 +82,7 @@ void Component::DeleteOrderList()
 *******************************************************************************/
 void Component::ReleaseInvoke()
 {
-	m_InvokeList.remove_if([](CallBackInvokeBase* c)
+	m_InvokeList.remove_if([](CallbackInvokeBase* c)
 	{
 		delete c;
 		return true;

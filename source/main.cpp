@@ -18,145 +18,21 @@
 #endif
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-
-const char* g_CLASS_NAME = "AppClass";			// ウィンドウクラス名
-const char* g_WINDOW_NAME = "Framework";	// ウィンドウキャプション
-HWND g_Window;									// ウィンドウハンドル
-bool g_IsFullScreen = false;					// フルスクリーンフラグ
-//bool g_IsSleep = false;							// ゲーム停止フラグ
-//bool g_IsWireFrame = false;						// ワイヤフレーム表示フラグ
-//bool g_IsMoveCursor = true;
 #ifdef _DEBUG
-int g_CountFPS;				// FPS値
-char g_DebugStr[2048];		// ウィンドウキャプションにつなげて表示する情報
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 #endif
 
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	//ランダムシードの初期化
-	srand((unsigned int)time(NULL));
-
-	// ウィンドウクラス作成
-	WNDCLASSEX wcex =
+	Application::Init(hInstance, nCmdShow);
+	while (!Application::m_EndExec)
 	{
-		sizeof(WNDCLASSEX),
-		CS_CLASSDC,
-		WndProc,
-		0,
-		0,
-		hInstance,
-		NULL,
-		LoadCursor(NULL, IDC_ARROW),
-		(HBRUSH)(COLOR_WINDOW + 1),
-		NULL,
-		g_CLASS_NAME,
-		NULL
-	};
-
-	// ウィンドウ作成の為、ウィンドウクラスを登録
-	RegisterClassEx(&wcex);
-
-	// ウィンドウ作成
-	g_Window = CreateWindowEx(0,
-		g_CLASS_NAME,
-		g_WINDOW_NAME,
-		WS_OVERLAPPEDWINDOW,
-		(int)(GetSystemMetrics(SM_CXSCREEN) * ((1.0f - WINDOW_RATE_WIDTH) * 0.5f)),		// ウィンドウ位置(X)
-		(int)(GetSystemMetrics(SM_CYSCREEN) * ((1.0f - WINDOW_RATE_HEIGHT) * 0.33f)),	// ウィンドウ位置(Y)
-		(int)(WINDOW_RESOLUTION_WIDTH + GetSystemMetrics(SM_CXDLGFRAME) * 2),									// ウィンドウサイズ(X)
-		(int)(WINDOW_RESOLUTION_HEIGHT + GetSystemMetrics(SM_CYDLGFRAME) * 2 + GetSystemMetrics(SM_CYCAPTION)),	// ウィンドウサイズ(Y)
-		NULL,
-		NULL,
-		hInstance,
-		NULL);
-
-	//ShowCursor(g_IsMoveCursor);
-
-	// ゲームを初期化
-	Manager::Init(hInstance);
-
-	// ウィンドウを表示
-	ShowWindow(g_Window, nCmdShow);
-	UpdateWindow(g_Window);
-
-	// タイマーの解像度を指定(ミリ秒)
-	timeBeginPeriod(1);
-
-	// 計測用変数初期化
-	DWORD dwExecLastTime = timeGetTime();
-	DWORD dwCurrentTime = 0;
-#ifdef _DEBUG
-	strcpy(g_DebugStr, g_WINDOW_NAME);
-	DWORD dwFPSLastTime = dwExecLastTime;
-	int dwFrameCount = 0;
-#endif
-
-	MSG msg;
-	while (1)
-	{
-        if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-		{
-			if (msg.message == WM_QUIT)
-			{
-				break;
-			}
-			else
-			{
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-			}
-        }
-		else //if (!g_IsSleep)
-		{
-			// 経過時間を更新
-			dwCurrentTime = timeGetTime();
-
-			// 1/60秒が経過したら更新・描画を実行する
-			if ((dwCurrentTime - dwExecLastTime) >= (1000.0f / 60))
-			{
-				dwExecLastTime = dwCurrentTime;
-#ifdef _DEBUG
-				dwFrameCount++;
-#endif
-				//if (!g_IsMoveCursor)
-				//{
-				//	D3DXVECTOR2 pos = GetWindowPosition();
-				//	D3DXVECTOR2 size = GetWindowSize();
-				//	SetCursorPos((int)(pos.x + size.x * 0.5f), (int)(pos.y + size.y * 0.5f));
-				//}
-				// 更新
-				Manager::Update();
-				// 描画
-				Manager::Draw();
-				// シーン遷移を行うか確認
-				Manager::CheckScene();
-			}
-#ifdef _DEBUG	// デバッグ版の時だけFPSを表示する	
-			if ((dwCurrentTime - dwFPSLastTime) >= 1000.0f)
-			{
-				g_CountFPS = dwFrameCount;
-				dwFPSLastTime = dwCurrentTime;
-				dwFrameCount = 0;
-				wsprintf(g_DebugStr, g_WINDOW_NAME);
-				wsprintf(&g_DebugStr[strlen(g_DebugStr)], " FPS:%d", g_CountFPS);
-				SetWindowText(g_Window, g_DebugStr);
-			}
-#endif
-		}
+		Application::Update();
 	}
+	Application::Uninit();
 
-	timeEndPeriod(1);
-
-	UnregisterClass(g_CLASS_NAME, wcex.hInstance);
-
-	Manager::Uninit();
-	_CrtDumpMemoryLeaks();
-	return (int)msg.wParam;
+	return (int)Application::m_Msg.wParam;
 }
-
-#ifdef _DEBUG
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-#endif
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -181,8 +57,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			DestroyWindow(hWnd);
 			break; 
 		case VK_F11:
-			g_IsFullScreen = !g_IsFullScreen;
-			Renderer::GetSwapChain()->SetFullscreenState(g_IsFullScreen, NULL);
+			Application::m_IsFullScreen = !Application::m_IsFullScreen;
+			Renderer::GetSwapChain()->SetFullscreenState(Application::m_IsFullScreen, NULL);
 			break;
 		default: break;
 		}
@@ -193,21 +69,154 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
+void Application::Init(HINSTANCE hInstance, int nCmdShow)
+{
+	//ランダムシードの初期化
+	srand((unsigned int)time(NULL));
+
+	// ウィンドウクラス作成
+	m_Wcex =
+	{
+		sizeof(WNDCLASSEX),
+		CS_CLASSDC,
+		WndProc,
+		0,
+		0,
+		hInstance,
+		NULL,
+		LoadCursor(NULL, IDC_ARROW),
+		(HBRUSH)(COLOR_WINDOW + 1),
+		NULL,
+		m_CLASS_NAME,
+		NULL
+	};
+
+	// ウィンドウ作成の為、ウィンドウクラスを登録
+	RegisterClassEx(&m_Wcex);
+
+	// ウィンドウ作成
+	m_Window = CreateWindowEx(0,
+		m_CLASS_NAME,
+		m_WINDOW_NAME,
+		WS_OVERLAPPEDWINDOW,
+		(int)(GetSystemMetrics(SM_CXSCREEN) * ((1.0f - Application::m_WINDOW_RATE.x) * 0.5f)),		// ウィンドウ位置(X)
+		(int)(GetSystemMetrics(SM_CYSCREEN) * ((1.0f - Application::m_WINDOW_RATE.y) * 0.33f)),	// ウィンドウ位置(Y)
+		(int)(Application::m_WINDOW_RESOLUTION.x + GetSystemMetrics(SM_CXDLGFRAME) * 2),									// ウィンドウサイズ(X)
+		(int)(Application::m_WINDOW_RESOLUTION.y + GetSystemMetrics(SM_CYDLGFRAME) * 2 + GetSystemMetrics(SM_CYCAPTION)),	// ウィンドウサイズ(Y)
+		NULL,
+		NULL,
+		hInstance,
+		NULL);
+
+	//ShowCursor(g_IsMoveCursor);
+
+	switch (m_Mode)
+	{
+	case Application::Mode::Scene:
+		// ゲームを初期化
+		Manager::Init(hInstance);
+		break;
+	case Application::Mode::AnimationEditor:
+		break;
+	default: break;
+	}
+
+	// ウィンドウを表示
+	ShowWindow(m_Window, nCmdShow);
+	UpdateWindow(m_Window);
+
+	// タイマーの解像度を指定(ミリ秒)
+	timeBeginPeriod(1);
+
+	// 計測用変数初期化
+	m_ExecLastTime = timeGetTime();
+	m_CurrentTime = 0;
+
+#ifdef _DEBUG
+	strcpy(m_DebugStr, m_WINDOW_NAME);
+	m_FpsLastTime = m_ExecLastTime;
+	m_FrameCount = 0;
+#endif
+}
+
+void Application::Uninit()
+{
+	timeEndPeriod(1);
+
+	UnregisterClass(m_CLASS_NAME, m_Wcex.hInstance);
+
+	Manager::Uninit();
+	_CrtDumpMemoryLeaks();
+}
+
+void Application::Update()
+{
+	if (PeekMessage(&m_Msg, NULL, 0, 0, PM_REMOVE))
+	{
+		if (m_Msg.message == WM_QUIT)
+		{
+			m_EndExec = true;
+		}
+		else
+		{
+			TranslateMessage(&m_Msg);
+			DispatchMessage(&m_Msg);
+		}
+	}
+	else //if (!g_IsSleep)
+	{
+		// 経過時間を更新
+		m_CurrentTime = timeGetTime();
+
+		// 1/60秒が経過したら更新・描画を実行する
+		if ((m_CurrentTime - m_ExecLastTime) >= (1000.0f / 60))
+		{
+			m_ExecLastTime = m_CurrentTime;
+#ifdef _DEBUG
+			m_FrameCount++;
+#endif
+			//if (!g_IsMoveCursor)
+			//{
+			//	D3DXVECTOR2 pos = GetWindowPosition();
+			//	D3DXVECTOR2 size = GetWindowSize();
+			//	SetCursorPos((int)(pos.x + size.x * 0.5f), (int)(pos.y + size.y * 0.5f));
+			//}
+			// 更新
+			Manager::Update();
+			// 描画
+			Manager::Draw();
+			// シーン遷移を行うか確認
+			Manager::CheckScene();
+		}
+#ifdef _DEBUG	// デバッグ版の時だけFPSを表示する	
+		if ((m_CurrentTime - m_FpsLastTime) >= 1000.0f)
+		{
+			m_CountFPS = m_FrameCount;
+			m_FpsLastTime = m_CurrentTime;
+			m_FrameCount = 0;
+			wsprintf(m_DebugStr, m_WINDOW_NAME);
+			wsprintf(&m_DebugStr[strlen(m_DebugStr)], " FPS:%d", m_CountFPS);
+			SetWindowText(m_Window, m_DebugStr);
+		}
+#endif
+	}
+}
+
 /*******************************************************************************
 *	ウィンドウ取得
 *******************************************************************************/
-HWND GetWindow()
+HWND Application::GetWindow()
 {
-	return g_Window;
+	return m_Window;
 }
 
 /*******************************************************************************
 *	ウィンドウサイズ取得
 *******************************************************************************/
-D3DXVECTOR2 GetWindowSize()
+D3DXVECTOR2 Application::GetWindowSize()
 {
 	RECT r;
-	GetWindowRect(g_Window, &r);
+	GetWindowRect(m_Window, &r);
 	D3DXVECTOR2 s = { (float)(r.right - r.left - (GetSystemMetrics(SM_CXDLGFRAME) * 2)),
 				(float)(r.bottom - r.top - (GetSystemMetrics(SM_CYDLGFRAME) * 2 + GetSystemMetrics(SM_CYCAPTION))) };
 	return s;
@@ -216,33 +225,28 @@ D3DXVECTOR2 GetWindowSize()
 /*******************************************************************************
 *	ウィンドウ位置(左上隅)
 *******************************************************************************/
-D3DXVECTOR2 GetWindowPosition()
+D3DXVECTOR2 Application::GetWindowPosition()
 {
 	RECT r;
-	GetWindowRect(g_Window, &r);
+	GetWindowRect(m_Window, &r);
 	D3DXVECTOR2 p = { (float)(r.left) + (GetSystemMetrics(SM_CXDLGFRAME)),
 					(float)(r.top) + (GetSystemMetrics(SM_CYDLGFRAME) + GetSystemMetrics(SM_CYCAPTION)) };
 	return p;
 }
 
-bool GetIsFullScreen()
-{
-	return g_IsFullScreen;
-}
-
 /*******************************************************************************
 *	この画面がアクティブかどうか
 *******************************************************************************/
-bool GetIsWindowActive()
+bool Application::GetIsWindowActive()
 {
 	HWND hWnd = GetActiveWindow();
-	return g_Window == hWnd;
+	return m_Window == hWnd;
 }
 
 /*******************************************************************************
 *	ウィンドウキャプション取得
 *******************************************************************************/
-const char* GetWindowName()
+const char* Application::GetWindowName()
 {
-	return g_WINDOW_NAME;
+	return m_WINDOW_NAME;
 }

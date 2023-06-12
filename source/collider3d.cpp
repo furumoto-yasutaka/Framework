@@ -110,7 +110,7 @@ void Collider3D::RemoveRemainElement(Collider3D* collider)
 	m_RemainList.remove(collider);
 }
 
-void Collider3D::CheckCallBack()
+void Collider3D::CheckCallback()
 {
 	auto cItr = m_ContactList.begin();
 

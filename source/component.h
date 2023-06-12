@@ -43,7 +43,7 @@ protected:
 	bool		m_IsActive = true;					// アクティブフラグ
 	bool		m_IsDestroy = false;				// 削除フラグ
 
-	list<CallBackInvokeBase*> m_InvokeList;			// 指定時間待ちコールバックリスト
+	list<CallbackInvokeBase*> m_InvokeList;			// 指定時間待ちコールバックリスト
 
 public:
 	Component(GameObject* attachObject, int updatePriority);
@@ -61,7 +61,7 @@ public:
 	// Invokeリストの呼び出し確認
 	void CheckInvoke();
 	// Invokeリストの呼び出し確認
-	void DeleteInvoke(CallBackInvokeBase* instance);
+	void DeleteInvoke(CallbackInvokeBase* instance);
 	// 所属リストを変更し、LateInitを呼び出す
 	void ChangeOrderList();
 
@@ -71,9 +71,9 @@ protected:
 	void ReleaseInvoke();
 
 	template<class T>
-	CallBackInvokeBase* SetInvoke(void(T::* function)(), float time)
+	CallbackInvokeBase* SetInvoke(void(T::* function)(), float time)
 	{
-		CallBackInvokeBase* c = DBG_NEW CallBackInvoke(this, function, time);
+		CallbackInvokeBase* c = DBG_NEW CallbackInvoke(this, function, time);
 		m_InvokeList.push_back(c);
 		return c;
 	}

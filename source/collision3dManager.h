@@ -42,7 +42,7 @@ private:
 	static void RegistCellData(TreeCellData<Collider3D>* data);
 	static void UpdateCells();
 	static void CheckCollision(DWORD index, list<Collider3D*>& stack);
-	static void CheckCallBack();
+	static void CheckCallback();
 
 	static DWORD GetMortonNumber(D3DXVECTOR3 min, D3DXVECTOR3 max);
 	// À•W¨üŒ`8•ª–Ø—v‘f”Ô†•ÏŠ·ŠÖ”

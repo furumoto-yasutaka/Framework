@@ -80,7 +80,7 @@ AudioInfo* AudioContainer::GetAudio_InName(string name)
 	else
 	{
 		string str = string("存在しない名称のサウンドの取得が要求されました。\n") + name;
-		MessageBox(GetWindow(),
+		MessageBox(Application::GetWindow(),
 			TEXT(str.c_str()),
 			TEXT("audioContainer:Error"),
 			MB_OK | MB_ICONERROR);
@@ -103,7 +103,7 @@ string AudioContainer::GetName_InAudio(AudioInfo* info)
 	else
 	{
 		string str = string("存在しないサウンドの名称の取得が要求されました。");
-		MessageBox(GetWindow(),
+		MessageBox(Application::GetWindow(),
 			TEXT(str.c_str()),
 			TEXT("audioContainer:Error"),
 			MB_OK | MB_ICONERROR);
@@ -122,7 +122,7 @@ void AudioContainer::AddAudio(string name, string path, float volume)
 	if (m_AudioInfo.count(string(name)))
 	{
 		string str = string("すでに存在する名称でサウンドの追加が要求されました。\n") + fullPath + "\nこのサウンドは読み込まれません。";
-		MessageBox(GetWindow(),
+		MessageBox(Application::GetWindow(),
 			TEXT(str.c_str()),
 			TEXT("audioContainer:Error"),
 			MB_OK | MB_ICONERROR);

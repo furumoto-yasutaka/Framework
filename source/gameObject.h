@@ -147,6 +147,14 @@ public:
 	{
 		T* component = DBG_NEW T(this);
 
+		// インスタンスを生成できなかった場合エラーを出す
+		// (シングルトンコンポーネントを複数生成しようとした等)
+		if (!component)
+		{
+			assert(component);
+			return NULL;
+		}
+
 		m_ComponentList.push_back(component);
 
 #ifdef _DEBUG

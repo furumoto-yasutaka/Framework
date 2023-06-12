@@ -1,6 +1,6 @@
 /*******************************************************************************
 *
-*	タイトル：	ゲーム全体管理用静的クラス
+*	タイトル：	アプリケーション管理用静的クラス
 *	ファイル：	manager.h
 *	作成者：	古本 泰隆
 *
@@ -15,8 +15,8 @@ public:
 	static inline Scene* m_Scene = NULL;		// シーンのインスタンス
 	static inline Scene* m_NextScene = NULL;	// 予約用シーンのインスタンス
 
-private:
-	Manager() {}
+protected:
+	Manager() = default;
 public:
 	static void Init(HINSTANCE hInstance);
 	static void Uninit();
@@ -50,7 +50,7 @@ public:
 	// シーン遷移を行うか確認
 	static void CheckScene();
 
-private:
+protected:
 	static void SetInitialScene();
 
 public:

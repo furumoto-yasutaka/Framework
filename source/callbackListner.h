@@ -15,11 +15,11 @@
 // (templateがあると型を指定する必要が
 //  出てしまうので受け皿として)
 template<typename... Args>
-class CallBackBase
+class CallbackBase
 {
 public:
-	CallBackBase() {}
-	virtual ~CallBackBase() {}
+	CallbackBase() {}
+	virtual ~CallbackBase() {}
 
 	// コールバック呼出
 	virtual void Execute(Args... argument) = 0;
@@ -27,21 +27,21 @@ public:
 
 // 派生クラス
 template<class T, typename... Args>
-class CallBack : public CallBackBase<Args...>
+class Callback : public CallbackBase<Args...>
 {
 private:
 	T* m_Origin;
-	void(T::* m_CallBack)(Args...);
+	void(T::* m_Callback)(Args...);
 
 public:
-	CallBack(T* origin, void(T::* callBack)(Args...))
-		: m_Origin(origin), m_CallBack(callBack)
+	Callback(T* origin, void(T::* callback)(Args...))
+		: m_Origin(origin), m_Callback(callback)
 	{}
-	~CallBack() {}
+	~Callback() {}
 
 	void Execute(Args... argument) override
 	{
-		(m_Origin->*m_CallBack)(argument...);
+		(m_Origin->*m_Callback)(argument...);
 	}
 };
 
@@ -51,10 +51,10 @@ public:
 // 基底クラス(templateがあると型を指定する必要が出てしまうので受け皿として)
 class Component;
 
-class CallBackInvokeBase
+class CallbackInvokeBase
 {
 public:
-	virtual ~CallBackInvokeBase() {}
+	virtual ~CallbackInvokeBase() {}
 
 	// コールバック呼出確認
 	virtual bool CheckTime() = 0;
@@ -62,26 +62,26 @@ public:
 
 // 派生クラス
 template<class T>
-class CallBackInvoke : public CallBackInvokeBase
+class CallbackInvoke : public CallbackInvokeBase
 {
 private:
 	T* m_Origin;
-	void(T::* m_CallBack)();
+	void(T::* m_Callback)();
 	float m_Time;
 
 public:
-	CallBackInvoke(Component* origin, void(T::* callBack)(), float time)
+	CallbackInvoke(Component* origin, void(T::* callback)(), float time)
 		: m_Origin(reinterpret_cast<T*>(origin)),
-		m_CallBack(callBack),
+		m_Callback(callback),
 		m_Time(time)
 	{}
-	~CallBackInvoke() {}
+	~CallbackInvoke() {}
 
 	bool CheckTime() override
 	{
 		if (m_Time <= 0.0f)
 		{
-			(m_Origin->*m_CallBack)();
+			(m_Origin->*m_Callback)();
 			delete this;
 			return true;
 		}

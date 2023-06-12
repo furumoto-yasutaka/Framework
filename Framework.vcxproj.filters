@@ -653,6 +653,9 @@
     <ClInclude Include="source\gameTest.h">
       <Filter>ヘッダー ファイル\Scene\BunBunSurvival</Filter>
     </ClInclude>
+    <ClInclude Include="source\singleton.h">
+      <Filter>ヘッダー ファイル\Static</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\audio.cpp">

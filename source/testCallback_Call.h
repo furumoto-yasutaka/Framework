@@ -12,7 +12,7 @@
 class TestCallback_Call : public NotDrawComponent
 {
 private:
-	CallBackBase<>* m_CallBack = NULL;
+	CallbackBase<>* m_Callback = NULL;
 
 public:
 	TestCallback_Call(GameObject* attachObject)

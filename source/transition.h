@@ -62,7 +62,7 @@ private:
 	static inline ID3D11PixelShader*	m_PixelShader = NULL;	// ピクセルシェーダー
 	static inline ID3D11InputLayout*	m_VertexLayout = NULL;	// 入力レイアウト
 
-	static inline CallBackBase<>*		m_CallBack = NULL;		// コールバック関数(シーンが切り替わった瞬間呼ばれる)
+	static inline CallbackBase<>*		m_Callback = NULL;		// コールバック関数(シーンが切り替わった瞬間呼ばれる)
 
 private:
 	Transition() {}
@@ -89,9 +89,9 @@ public:
 
 	// コールバックを設定
 	template<class T>
-	static void SetCallBack(T* origin, void(T::* function)())
+	static void SetCallback(T* origin, void(T::* function)())
 	{
-		m_CallBack = DBG_NEW CallBack(origin, function);
+		m_Callback = DBG_NEW Callback(origin, function);
 	}
 	/////////////////////////////
 private:

@@ -47,7 +47,7 @@ public:
 		D3DXVECTOR3				Offset;				// エミッターの座標差異(パーティクル生成時にパーティクルの座標に足し合わせる)
 		SimulationSpaceId		SimulationSpace;	// エミッターの座標基準
 		EmitterStopActionId		StopAction;			// エフェクト終了時の挙動
-		CallBackBase<>*			StopCallback;		// コールバック関数
+		CallbackBase<>*			StopCallback;		// コールバック関数
 
 		EmitParam();
 		EmitParam(bool isLooping, float duration, int maxParticles,
@@ -79,7 +79,7 @@ public:
 			this->StopAction = stopAction;
 			if (callbackOrigin && callBackFunction)
 			{
-				this->StopCallback = DBG_NEW CallBack(callbackOrigin, callBackFunction);
+				this->StopCallback = DBG_NEW Callback(callbackOrigin, callBackFunction);
 			}
 			else
 			{

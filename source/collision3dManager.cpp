@@ -68,7 +68,7 @@ void Collision3DManager::Update()
 	CheckCollision(0, stack);
 
 	// 衝突コールバックを実行
-	CheckCallBack();
+	CheckCallback();
 }
 
 void Collision3DManager::Draw()
@@ -238,11 +238,11 @@ void Collision3DManager::CheckCollision(DWORD index, list<Collider3D*>& stack)
 /*******************************************************************************
 *	衝突コールバック処理
 *******************************************************************************/
-void Collision3DManager::CheckCallBack()
+void Collision3DManager::CheckCallback()
 {
 	for (TreeCellData<Collider3D>* c : m_TreeCellDataList)
 	{
-		c->m_Object->CheckCallBack();
+		c->m_Object->CheckCallback();
 	}
 }
 

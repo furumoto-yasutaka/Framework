@@ -31,7 +31,7 @@ public:
 
 		// ストリーミング再生時のみ使用
 		HMMIO*					Hmmio;				// 読み込み用ハンドル
-		AudioCallback*			CallBack;			// コールバッククラス
+		AudioCallback*			Callback;			// コールバッククラス
 		BYTE*					PrimaryBuffer;		// バッファ1
 		BYTE*					SecondaryBuffer;	// バッファ2
 		LONG					SecondaryBufLength;	// バッファ2のうち使用している領域

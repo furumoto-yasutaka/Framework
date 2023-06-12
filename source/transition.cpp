@@ -46,7 +46,7 @@ void Transition::Uninit()
 	m_VertexLayout->Release();
 	m_PixelShader->Release();
 	m_VertexBuffer->Release();
-	if (m_CallBack) { delete m_CallBack; }
+	if (m_Callback) { delete m_Callback; }
 }
 
 void Transition::Update()
@@ -154,11 +154,11 @@ void Transition::StartTransitionIn()
 	m_IsLoadFrame = true;
 
 	// コールバック関数呼出
-	if (m_CallBack)
+	if (m_Callback)
 	{
-		m_CallBack->Execute();
-		delete m_CallBack;
-		m_CallBack = NULL;
+		m_Callback->Execute();
+		delete m_Callback;
+		m_Callback = NULL;
 	}
 }
 
@@ -318,15 +318,15 @@ void Transition::CreateVertex(VERTEX_3D* vertex, float alpha)
 	vertex[0].Diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, alpha);
 	vertex[0].TexCoord = D3DXVECTOR2(0.0f, 0.0f);
 
-	vertex[1].Position = D3DXVECTOR3((float)WINDOW_RESOLUTION_WIDTH, 0.0f, 0.0f);
+	vertex[1].Position = D3DXVECTOR3(Application::m_WINDOW_RESOLUTION.x, 0.0f, 0.0f);
 	vertex[1].Diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, alpha);
 	vertex[1].TexCoord = D3DXVECTOR2(1.0f, 0.0f);
 
-	vertex[2].Position = D3DXVECTOR3(0.0f, (float)WINDOW_RESOLUTION_HEIGHT, 0.0f);
+	vertex[2].Position = D3DXVECTOR3(0.0f, Application::m_WINDOW_RESOLUTION.y, 0.0f);
 	vertex[2].Diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, alpha);
 	vertex[2].TexCoord = D3DXVECTOR2(0.0f, 1.0f);
 
-	vertex[3].Position = D3DXVECTOR3((float)WINDOW_RESOLUTION_WIDTH, (float)WINDOW_RESOLUTION_HEIGHT, 0.0f);
+	vertex[3].Position = D3DXVECTOR3(Application::m_WINDOW_RESOLUTION.x, Application::m_WINDOW_RESOLUTION.y, 0.0f);
 	vertex[3].Diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, alpha);
 	vertex[3].TexCoord = D3DXVECTOR2(1.0f, 1.0f);
 }
@@ -336,20 +336,20 @@ void Transition::CreateVertex(VERTEX_3D* vertex, float alpha)
 *******************************************************************************/
 void Transition::CreateVertex_WipeLeft(VERTEX_3D* vertex, float rate)
 {
-	float X = -(float)WINDOW_RESOLUTION_WIDTH * 0.5f * (1.0f - rate);
+	float X = -Application::m_WINDOW_RESOLUTION.x * 0.5f * (1.0f - rate);
 	vertex[0].Position = D3DXVECTOR3(X, 0.0f, 0.0f);
 	vertex[0].Diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	vertex[0].TexCoord = D3DXVECTOR2(0.0f, 0.0f);
 
-	vertex[1].Position = D3DXVECTOR3(X + (float)WINDOW_RESOLUTION_WIDTH * 0.5f, 0.0f, 0.0f);
+	vertex[1].Position = D3DXVECTOR3(X + Application::m_WINDOW_RESOLUTION.x * 0.5f, 0.0f, 0.0f);
 	vertex[1].Diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	vertex[1].TexCoord = D3DXVECTOR2(0.5f, 0.0f);
 
-	vertex[2].Position = D3DXVECTOR3(X, (float)WINDOW_RESOLUTION_HEIGHT, 0.0f);
+	vertex[2].Position = D3DXVECTOR3(X, Application::m_WINDOW_RESOLUTION.y, 0.0f);
 	vertex[2].Diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	vertex[2].TexCoord = D3DXVECTOR2(0.0f, 1.0f);
 
-	vertex[3].Position = D3DXVECTOR3(X + (float)WINDOW_RESOLUTION_WIDTH * 0.5f, (float)WINDOW_RESOLUTION_HEIGHT, 0.0f);
+	vertex[3].Position = D3DXVECTOR3(X + Application::m_WINDOW_RESOLUTION.x * 0.5f, Application::m_WINDOW_RESOLUTION.y, 0.0f);
 	vertex[3].Diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	vertex[3].TexCoord = D3DXVECTOR2(0.5f, 1.0f);
 }
@@ -359,20 +359,20 @@ void Transition::CreateVertex_WipeLeft(VERTEX_3D* vertex, float rate)
 *******************************************************************************/
 void Transition::CreateVertex_WipeRight(VERTEX_3D* vertex, float rate)
 {
-	float X = (float)WINDOW_RESOLUTION_WIDTH * 0.5f * (1.0f - rate);
-	vertex[0].Position = D3DXVECTOR3(X + (float)WINDOW_RESOLUTION_WIDTH * 0.5f, 0.0f, 0.0f);
+	float X = Application::m_WINDOW_RESOLUTION.x * 0.5f * (1.0f - rate);
+	vertex[0].Position = D3DXVECTOR3(X + Application::m_WINDOW_RESOLUTION.x * 0.5f, 0.0f, 0.0f);
 	vertex[0].Diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	vertex[0].TexCoord = D3DXVECTOR2(0.5f, 0.0f);
 
-	vertex[1].Position = D3DXVECTOR3(X + (float)WINDOW_RESOLUTION_WIDTH, 0.0f, 0.0f);
+	vertex[1].Position = D3DXVECTOR3(X + Application::m_WINDOW_RESOLUTION.x, 0.0f, 0.0f);
 	vertex[1].Diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	vertex[1].TexCoord = D3DXVECTOR2(1.0f, 0.0f);
 
-	vertex[2].Position = D3DXVECTOR3(X + (float)WINDOW_RESOLUTION_WIDTH * 0.5f, (float)WINDOW_RESOLUTION_HEIGHT, 0.0f);
+	vertex[2].Position = D3DXVECTOR3(X + Application::m_WINDOW_RESOLUTION.x * 0.5f, (float)Application::m_WINDOW_RESOLUTION.y, 0.0f);
 	vertex[2].Diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	vertex[2].TexCoord = D3DXVECTOR2(0.5f, 1.0f);
 
-	vertex[3].Position = D3DXVECTOR3(X + (float)WINDOW_RESOLUTION_WIDTH, (float)WINDOW_RESOLUTION_HEIGHT, 0.0f);
+	vertex[3].Position = D3DXVECTOR3(X + Application::m_WINDOW_RESOLUTION.x, Application::m_WINDOW_RESOLUTION.y, 0.0f);
 	vertex[3].Diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	vertex[3].TexCoord = D3DXVECTOR2(1.0f, 1.0f);
 }

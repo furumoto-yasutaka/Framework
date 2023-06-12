@@ -12,7 +12,7 @@ void Input::Init(HINSTANCE hInstance)
 	//ShowCursor(false);
 
 	HRESULT hr;
-	HWND hWnd = GetWindow();
+	HWND hWnd = Application::GetWindow();
 
 	// DirectInputオブジェクトの作成
 	hr = DirectInput8Create(hInstance, DIRECTINPUT_VERSION,
@@ -325,12 +325,12 @@ long Input::GetMouseMoveZ()
 D3DXVECTOR2 Input::GetMouseCursorClient()
 {
 	POINT p;
-	D3DXVECTOR2 windowSize = GetWindowSize();
+	D3DXVECTOR2 windowSize = Application::GetWindowSize();
 	GetCursorPos(&p);
-	ScreenToClient(GetWindow(), &p);
+	ScreenToClient(Application::GetWindow(), &p);
 	D3DXVECTOR2 pos = { (float)p.x, (float)p.y };
-	pos.x *= (float)WINDOW_RESOLUTION_WIDTH / windowSize.x;
-	pos.y *= (float)WINDOW_RESOLUTION_HEIGHT / windowSize.y;
+	pos.x *= Application::m_WINDOW_RESOLUTION.x / windowSize.x;
+	pos.y *= Application::m_WINDOW_RESOLUTION.y / windowSize.y;
 	return pos;
 }
 

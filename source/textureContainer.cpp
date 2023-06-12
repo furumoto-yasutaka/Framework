@@ -81,7 +81,7 @@ Texture* TextureContainer::GetTexture_InName(string name)
 	else
 	{
 		string str = string("存在しない名称のテクスチャの取得が要求されました。\n") + name;
-		MessageBox(GetWindow(),
+		MessageBox(Application::GetWindow(),
 			TEXT(str.c_str()),
 			TEXT("textureContainer:Error"),
 			MB_OK | MB_ICONERROR);
@@ -118,7 +118,7 @@ void TextureContainer::AddTexture(string name, string path, int widthDiv, int he
 	if (m_TextureInfo.count(string(name)))
 	{
 		string str = string("すでに存在する名称でテクスチャの追加が要求されました。\n") + fullPath + "\nこのテクスチャは読み込まれません。";
-		MessageBox(GetWindow(),
+		MessageBox(Application::GetWindow(),
 			TEXT(str.c_str()),
 			TEXT("textureContainer:Warning"),
 			MB_OK | MB_ICONERROR);

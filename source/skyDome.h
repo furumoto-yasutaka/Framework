@@ -7,27 +7,32 @@
 *******************************************************************************/
 #pragma once
 #include "main.h"
+#include "modelRenderer.h"
 
 #include <string>
 
 class Model;
 
-class SkyDome
+class SkyDome : public ModelRenderer
 {
 private:
-	static inline string				m_ModelName = "SkyDome";	// モデル名称(コンテナ上の名前)
-	static inline Model*				m_Model = NULL;			// モデルの詳細情報
-	static inline ID3D11VertexShader*	m_VertexShader = NULL;		// 頂点シェーダー
-	static inline ID3D11PixelShader*	m_PixelShader = NULL;		// ピクセルシェーダー
-	static inline ID3D11InputLayout*	m_VertexLayout = NULL;		// 入力レイアウト
-	static inline float					m_Size;						// サイズ
+	float				m_Size = 0.0f;	// ドームのサイズ
 
 private:
+	SkyDome(GameObject* attachObject)
+		: ModelRenderer(attachObject)
+	{}
 	~SkyDome() {}
 public:
-	static void Init();
-	static void Uninit();
-	static void Draw();
+	void Init(const char* modelName,
+		string vertexShaderName = "vertexLightingVS",
+		string pixelShaderName = "vertexLightingPS",
+		float size = 1000.0f * 0.9f);
+	void Update() override;
+	void Draw3d() override;
 
-	static void SetModel(string name);
+#ifdef _DEBUG
+public:
+	void DrawInspector() override;
+#endif
 };

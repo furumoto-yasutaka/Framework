@@ -11,7 +11,8 @@
 #include "gameObject.h"
 #include "input.h"
 
-void ModelRenderer::Init(const char* modelName, string vertexShaderName, string pixelShaderName)
+void ModelRenderer::Init(const char* modelName,
+	string vertexShaderName, string pixelShaderName)
 {
 	m_ModelName = modelName;
 	m_VertexShaderName = vertexShaderName + ".cso";

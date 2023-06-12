@@ -58,7 +58,7 @@ Model* ModelContainer::GetModel_InName(string name)
 	else
 	{
 		string str = string("存在しない名称のモデルの取得が要求されました。\n") + name;
-		MessageBox(GetWindow(),
+		MessageBox(Application::GetWindow(),
 			TEXT(str.c_str()),
 			TEXT("modelContainer:Error"),
 			MB_OK | MB_ICONERROR);
@@ -77,7 +77,7 @@ void ModelContainer::AddModel(string name, string path, float scale)
 	if (m_ModelInfo.find(name) != m_ModelInfo.end())
 	{
 		string str = string("すでに存在する名称でモデルの追加が要求されました。\n") + fullPath + "\nこのモデルは読み込まれません。";
-		MessageBox(GetWindow(),
+		MessageBox(Application::GetWindow(),
 			TEXT(str.c_str()),
 			TEXT("modelContainer:Error"),
 			MB_OK | MB_ICONERROR);

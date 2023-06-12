@@ -15,7 +15,7 @@ class Model;
 
 class ModelRenderer : public Draw3DComponent
 {
-private:
+protected:
 	string				m_ModelName;			// モデルの名称(コンテナ上の名前)
 	string				m_VertexShaderName;		// 頂点シェーダー名
 	string				m_PixelShaderName;		// ピクセルシェーダー名
@@ -30,7 +30,9 @@ public:
 	{}
 	~ModelRenderer() {}
 
-	void Init(const char* modelName, string vertexShaderName = "vertexLightingVS", string pixelShaderName = "vertexLightingPS");
+	void Init(const char* modelName,
+		string vertexShaderName = "vertexLightingVS",
+		string pixelShaderName = "vertexLightingPS");
 	void Uninit() override;
 	void Update() override;
 	void Draw3d() override;

@@ -17,17 +17,17 @@
 #include "testCallback_Call.h"
 #include "testCallback_Func.h"
 
-class CallBackTest : public Scene
+class CallbackTest : public Scene
 {
 public:
-	~CallBackTest() {}
+	~CallbackTest() {}
 
 	void Init() override
 	{
 		GameObject* obj;
 
 
-		obj = AddGameObject("CallBack");
+		obj = AddGameObject("Callback");
 		obj->AddComponent<TestCallback_Call>()->Init();
 		obj->AddComponent<TestCallback_Func>()->Init();
 

@@ -47,13 +47,13 @@ void Renderer::Init()
 	// デバイス、スワップチェーン作成
 	DXGI_SWAP_CHAIN_DESC swapChainDesc{};
 	swapChainDesc.BufferCount = 1;
-	swapChainDesc.BufferDesc.Width = (UINT)WINDOW_RESOLUTION_WIDTH;
-	swapChainDesc.BufferDesc.Height = (UINT)WINDOW_RESOLUTION_HEIGHT;
+	swapChainDesc.BufferDesc.Width = (UINT)Application::m_WINDOW_RESOLUTION.x;
+	swapChainDesc.BufferDesc.Height = (UINT)Application::m_WINDOW_RESOLUTION.y;
 	swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	swapChainDesc.BufferDesc.RefreshRate.Numerator = 60;
 	swapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	swapChainDesc.OutputWindow = GetWindow();
+	swapChainDesc.OutputWindow = Application::GetWindow();
 	swapChainDesc.SampleDesc.Count = 1;
 	swapChainDesc.SampleDesc.Quality = 0;
 	swapChainDesc.Windowed = TRUE;
@@ -111,8 +111,8 @@ void Renderer::Init()
 
 	// ビューポート設定
 	D3D11_VIEWPORT viewport;
-	viewport.Width = (FLOAT)WINDOW_RESOLUTION_WIDTH;
-	viewport.Height = (FLOAT)WINDOW_RESOLUTION_HEIGHT;
+	viewport.Width = Application::m_WINDOW_RESOLUTION.x;
+	viewport.Height = Application::m_WINDOW_RESOLUTION.y;
 	viewport.MinDepth = 0.0f;
 	viewport.MaxDepth = 1.0f;
 	viewport.TopLeftX = 0;
@@ -294,7 +294,7 @@ void Renderer::SetWorldViewProjection2D()
 	D3DXMATRIX projection;
 
 	D3DXMatrixOrthoOffCenterLH(&projection, 0.0f,
-		(float)WINDOW_RESOLUTION_WIDTH, (float)WINDOW_RESOLUTION_HEIGHT,
+		Application::m_WINDOW_RESOLUTION.x, Application::m_WINDOW_RESOLUTION.y,
 		0.0f, 0.0f, 1.0f);
 
 	D3DXMatrixTranspose(&projection, &projection);

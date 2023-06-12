@@ -12,11 +12,11 @@
 void TestCallback_Call::LateInit()
 {
 	TestCallback_Func* f = m_AttachObject->GetComponent<TestCallback_Func>();
-	m_CallBack = new CallBack(f, &TestCallback_Func::Func);
-	m_CallBack->Execute();
+	m_Callback = new Callback(f, &TestCallback_Func::Func);
+	m_Callback->Execute();
 }
 
 void TestCallback_Call::Uninit()
 {
-	delete m_CallBack;
+	delete m_Callback;
 }

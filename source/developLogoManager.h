@@ -13,7 +13,7 @@ class DevelopLogoManager : public NotDrawComponent
 {
 private:
 	static inline const float m_TimeLimit = 3.0f;
-	CallBackInvokeBase* m_InvokeInstance = NULL;
+	CallbackInvokeBase* m_InvokeInstance = NULL;
 	bool m_IsNextScene = false;
 
 public:

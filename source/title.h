@@ -30,7 +30,7 @@ public:
 		// îwåi
 		obj = AddGameObject("BackGround");
 		obj->AddComponent<Plate2DRenderer>()->Init("White",
-			{ WINDOW_RESOLUTION_WIDTH, WINDOW_RESOLUTION_HEIGHT });
+			{ Application::m_WINDOW_RESOLUTION.x, Application::m_WINDOW_RESOLUTION.y });
 
 		// É^ÉCÉgÉãÉçÉS
 		obj = AddGameObject("GameLogo");

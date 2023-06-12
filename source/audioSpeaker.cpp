@@ -31,7 +31,7 @@ void AudioSpeaker::Uninit()
 		{
 			mmioClose(*info->Hmmio, 0);
 			delete info->Hmmio;
-			delete info->CallBack;
+			delete info->Callback;
 			delete[] info->PrimaryBuffer;
 			delete[] info->SecondaryBuffer;
 		}
@@ -104,7 +104,7 @@ void AudioSpeaker::Stop_FromKey(string key)
 	if (info->AudioInfo->GetIsStreaming())
 	{
 		mmioClose(*info->Hmmio, 0);
-		delete info->CallBack;
+		delete info->Callback;
 		delete info->PrimaryBuffer;
 		delete info->SecondaryBuffer;
 	}
@@ -136,7 +136,7 @@ void AudioSpeaker::Stop_FromAudioName(string name)
 	if (info->AudioInfo->GetIsStreaming())
 	{
 		mmioClose(*info->Hmmio, 0);
-		delete info->CallBack;
+		delete info->Callback;
 		delete info->PrimaryBuffer;
 		delete info->SecondaryBuffer;
 	}
@@ -282,7 +282,7 @@ AudioSpeaker::PlayInfo* AudioSpeaker::SetAudio(string key, string name, bool isL
 	{
 		info->Hmmio = DBG_NEW HMMIO();
 		info->AudioInfo->Open(info->Hmmio);
-		info->CallBack = DBG_NEW AudioCallback(this, key);
+		info->Callback = DBG_NEW AudioCallback(this, key);
 		info->PrimaryBuffer = DBG_NEW unsigned char[GetDefaultBufferLength(info)];
 		info->SecondaryBuffer = DBG_NEW unsigned char[GetDefaultBufferLength(info)];
 		info->SecondaryBufLength = 0;
@@ -295,7 +295,7 @@ AudioSpeaker::PlayInfo* AudioSpeaker::SetAudio(string key, string name, bool isL
 		info->AudioInfo->GetWaveFormat(),
 		0,
 		XAUDIO2_DEFAULT_FREQ_RATIO,
-		info->AudioInfo->GetIsStreaming() ? info->CallBack : NULL);
+		info->AudioInfo->GetIsStreaming() ? info->Callback : NULL);
 	assert(info->SourceVoice);
 
 	// 再生情報をリストに追加
@@ -323,7 +323,7 @@ map<string, AudioSpeaker::PlayInfo*>::iterator AudioSpeaker::GetIterator_FromAud
 void AudioSpeaker::KeyUnknownError(string key)
 {
 	string str = string("存在しないキーでの参照が要求されました。\n") + key;
-	MessageBox(GetWindow(),
+	MessageBox(Application::GetWindow(),
 		TEXT(str.c_str()),
 		TEXT("audioSpeaker:Error"),
 		MB_OK | MB_ICONERROR);
@@ -335,7 +335,7 @@ void AudioSpeaker::KeyUnknownError(string key)
 void AudioSpeaker::AudioNameUnknownError(string name)
 {
 	string str = string("再生情報リストに存在しないサウンド名称での参照が要求されました。\n") + name;
-	MessageBox(GetWindow(),
+	MessageBox(Application::GetWindow(),
 		TEXT(str.c_str()),
 		TEXT("audioSpeaker:Error"),
 		MB_OK | MB_ICONERROR);

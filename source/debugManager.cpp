@@ -42,7 +42,7 @@ void DebugManager::Init()
 	ImGuiIO& io = ImGui::GetIO();
 	io.Fonts->AddFontFromFileTTF("asset/font/Roboto-Medium.ttf", 15.0f);
 	
-	ImGui_ImplWin32_Init(GetWindow());
+	ImGui_ImplWin32_Init(Application::GetWindow());
 	ImGui_ImplDX11_Init(Renderer::GetDevice(), Renderer::GetDeviceContext());
 
 	// 各種ウィンドウの登録
