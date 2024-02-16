@@ -15,6 +15,7 @@
 #include "obbCollider3d.h"
 #include "sphereCollider3d.h"
 #include "capsuleCollider3d.h"
+#include "skyDome.h"
 
 // スクリプト
 #include "testInvoke.h"
@@ -34,6 +35,9 @@ public:
 		GameObject* parent;
 		GameObject* children;
 
+		// スカイドーム
+		obj = AddGameObject("SkyDome");
+		obj->AddComponent<SkyDome>()->Init();
 
 		obj = AddGameObject("Camera");
 		obj->AddComponent<Camera>()->Init(true);

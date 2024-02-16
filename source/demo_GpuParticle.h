@@ -13,6 +13,7 @@
 #include "camera.h"
 #include "particleSystem.h"
 #include "particleEmitChecker.h"
+#include "skyDome.h"
 
 // スクリプト
 #include "debugCameraControl.h"
@@ -28,6 +29,9 @@ public:
 	{
 		GameObject* obj;
 
+		// スカイドーム
+		obj = AddGameObject("SkyDome");
+		obj->AddComponent<SkyDome>()->Init();
 
 		obj = AddGameObject("Telop");
 		obj->m_LocalPosition = { 0.0f, 710.0f, 0.0f };

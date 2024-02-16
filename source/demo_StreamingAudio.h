@@ -12,6 +12,7 @@
 // コンポーネント
 #include "camera.h"
 #include "audioSpeaker.h"
+#include "skyDome.h"
 
 // スクリプト
 #include "debugCameraControl.h"
@@ -25,6 +26,9 @@ public:
 	{
 		GameObject* obj;
 
+		// スカイドーム
+		obj = AddGameObject("SkyDome");
+		obj->AddComponent<SkyDome>()->Init();
 
 		obj = AddGameObject("Telop");
 		obj->m_LocalPosition = { 440.0f, 490.0f, 0.0f };

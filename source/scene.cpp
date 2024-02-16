@@ -145,7 +145,6 @@ void Scene::Draw3d()
 		}
 	}
 
-	SkyDome::Draw();
 	Collision3DManager::Draw();
 }
 

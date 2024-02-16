@@ -12,6 +12,7 @@
 // コンポーネント
 #include "camera.h"
 #include "plate2dRenderer.h"
+#include "skyDome.h"
 
 // スクリプト
 #include "debugCameraControl.h"
@@ -25,6 +26,10 @@ public:
 	void Init() override
 	{
 		GameObject* obj;
+
+		// スカイドーム
+		obj = AddGameObject("SkyDome");
+		obj->AddComponent<SkyDome>()->Init();
 
 		// シーンマネージャー
 		obj = AddGameObject("Manager");

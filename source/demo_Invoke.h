@@ -15,6 +15,7 @@
 #include "plate3dRenderer.h"
 #include "aabbCollider3d.h"
 #include "audioSpeaker.h"
+#include "skyDome.h"
 
 // スクリプト
 #include "testInvoke.h"
@@ -29,6 +30,9 @@ public:
 	{
 		GameObject* obj;
 
+		// スカイドーム
+		obj = AddGameObject("SkyDome");
+		obj->AddComponent<SkyDome>()->Init();
 
 		obj = AddGameObject("Telop");
 		obj->m_LocalPosition = { 0.0f, 570.0f, 0.0f };

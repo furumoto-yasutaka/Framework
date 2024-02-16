@@ -16,6 +16,7 @@
 #include "thirdPersonCamera.h"
 #include "particleSystem.h"
 #include "particleEmitChecker.h"
+#include "skyDome.h"
 
 // スクリプト
 #include "debugCameraControl.h"
@@ -39,6 +40,9 @@ public:
 		GameObject* obj;
 		GameObject* player;
 
+		// スカイドーム
+		obj = AddGameObject("SkyDome");
+		obj->AddComponent<SkyDome>()->Init();
 
 		player = CreatePlayer();
 		CreateEnemy({ 0.0f, 0.0f, 0.0f });

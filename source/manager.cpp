@@ -42,7 +42,6 @@ void Manager::Init(HINSTANCE hInstance)
 	TextureContainer::Init();
 	ModelContainer::Init();
 	AudioContainer::Init();
-	SkyDome::Init();
 	Transition::Init();
 	SavedataManager::Init();
 	Collision3DManager::Init(0, D3DXVECTOR3(-60.0f, -60.0f, -60.0f), D3DXVECTOR3(120.0f, 120.0f, 120.0f));
@@ -76,7 +75,6 @@ void Manager::Uninit()
 	Collision3DManager::Uninit();
 	SavedataManager::Uninit();
 	Transition::Uninit();
-	SkyDome::Uninit();
 	AudioContainer::Uninit();
 	ModelContainer::Uninit();
 	TextureContainer::Uninit();

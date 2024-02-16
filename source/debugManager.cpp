@@ -54,6 +54,13 @@ void DebugManager::Init()
 	{
 		m_UseMemory[i] = 0.0f;
 	}
+
+	// ÉgÉâÉìÉWÉVÉáÉìèÓïÒçÏê¨
+	m_TransitionInfo.Mode[(int)Transition::TransitionState::Out] = Transition::TransitionPattern::Fade;
+	m_TransitionInfo.TimeLimitSec[(int)Transition::TransitionState::Out] = 0.5f;
+	m_TransitionInfo.Mode[(int)Transition::TransitionState::In] = Transition::TransitionPattern::Fade;
+	m_TransitionInfo.TimeLimitSec[(int)Transition::TransitionState::In] = 0.5f;
+	m_TransitionInfo.Texture = TextureContainer::GetTexture_InName("Black");
 }
 
 void DebugManager::Uninit()
@@ -261,32 +268,32 @@ void DebugManager::DrawGameSceneSelectButton()
 
 void DebugManager::ChangeScene_Demo_Invoke()
 {
-	Manager::SetScene<Demo_Invoke>(Transition::GetFirstTransitionOption());
+	Manager::SetScene<Demo_Invoke>(m_TransitionInfo);
 }
 
 void DebugManager::ChangeScene_Demo_Parent()
 {
-	Manager::SetScene<Demo_Parent>(Transition::GetFirstTransitionOption());
+	Manager::SetScene<Demo_Parent>(m_TransitionInfo);
 }
 
 void DebugManager::ChangeScene_Demo_CollisionSplit()
 {
-	Manager::SetScene<Demo_CollisionSplit>(Transition::GetFirstTransitionOption());
+	Manager::SetScene<Demo_CollisionSplit>(m_TransitionInfo);
 }
 
 void DebugManager::ChangeScene_Demo_GpuParticle()
 {
-	Manager::SetScene<Demo_GpuParticle>(Transition::GetFirstTransitionOption());
+	Manager::SetScene<Demo_GpuParticle>(m_TransitionInfo);
 }
 
 void DebugManager::ChangeScene_Demo_StreamingAudio()
 {
-	Manager::SetScene<Demo_StreamingAudio>(Transition::GetFirstTransitionOption());
+	Manager::SetScene<Demo_StreamingAudio>(m_TransitionInfo);
 }
 
 void DebugManager::ChangeScene_Game_DevelopLogo()
 {
-	Manager::SetScene<DevelopLogo>(Transition::GetFirstTransitionOption());
+	Manager::SetScene<DevelopLogo>(m_TransitionInfo);
 }
 
 /*******************************************************************************

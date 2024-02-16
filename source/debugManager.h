@@ -8,6 +8,7 @@
 #ifdef _DEBUG
 #pragma once
 #include "main.h"
+#include "transition.h"
 #include "imgui_impl_dx11.h"
 #include "imgui_impl_win32.h"
 
@@ -41,6 +42,7 @@ private:
 
 	static inline float m_UseMemory[180];
 	static inline float m_MaxMemory = 0.0f;
+	static inline Transition::TransitionOption m_TransitionInfo;
 
 public:
 	static inline bool m_IsWireFrame = false;				// ワイヤーフレーム

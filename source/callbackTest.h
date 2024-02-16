@@ -11,6 +11,7 @@
 
 // コンポーネント
 #include "camera.h"
+#include "skyDome.h"
 
 // スクリプト
 #include "debugCameraControl.h"
@@ -26,6 +27,9 @@ public:
 	{
 		GameObject* obj;
 
+		// スカイドーム
+		obj = AddGameObject("SkyDome");
+		obj->AddComponent<SkyDome>()->Init();
 
 		obj = AddGameObject("Callback");
 		obj->AddComponent<TestCallback_Call>()->Init();

@@ -65,7 +65,7 @@ void SkyDome::Draw3d()
 *******************************************************************************/
 void SkyDome::DrawInspector()
 {
-	if (ImGui::CollapsingHeader("SkyDome (Singleton)"))
+	if (ImGui::CollapsingHeader("SkyDome"))
 	{
 		ImGui::Text("ModelName : %s", m_ModelName.c_str());
 
