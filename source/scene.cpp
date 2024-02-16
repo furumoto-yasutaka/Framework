@@ -79,7 +79,7 @@ void Scene::Update()
 	}
 
 	// 描画のタイミングに合わせてシーンの後に行う
-	Transition::Update();
+	//Transition::Update();
 }
 
 void Scene::Draw()
@@ -145,7 +145,7 @@ void Scene::Draw3d()
 		}
 	}
 
-	SkyDome::Draw();
+	//SkyDome::Draw();
 	Collision3DManager::Draw();
 }
 
@@ -183,7 +183,7 @@ void Scene::Draw2d()
 	}
 
 	// トランジションが一番手前でなければならないためこのタイミング
-	Transition::Draw();
+	//Transition::Draw();
 }
 
 /*******************************************************************************

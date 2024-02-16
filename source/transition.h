@@ -10,10 +10,11 @@
 #include "renderer.h"
 #include "textureContainer.h"
 #include "callbackListner.h"
+#include "draw2dComponent.h"
 
 class Texture;
 
-class Transition
+class Transition : public Draw2DComponent
 {
 public:
 	// トランジションの形式
@@ -52,55 +53,57 @@ public:
 	};
 
 private:
-	static inline TransitionState		m_State;				// トランジションの状況
-	static inline TransitionOption		m_Option;				// トランジション設定
-	static inline float					m_TimeCountSec = 0.0f;	// 経過時間
-	static inline bool					m_IsLoadFrame = false;	// ロードがあるフレーム
+	static TransitionOption	m_Option;			// トランジション設定
 
-	static inline ID3D11Buffer*			m_VertexBuffer = NULL;	// 頂点バッファ
-	static inline ID3D11VertexShader*	m_VertexShader = NULL;	// 頂点シェーダー
-	static inline ID3D11PixelShader*	m_PixelShader = NULL;	// ピクセルシェーダー
-	static inline ID3D11InputLayout*	m_VertexLayout = NULL;	// 入力レイアウト
+	ID3D11Buffer*		m_VertexBuffer = NULL;	// 頂点バッファ
+	ID3D11VertexShader* m_VertexShader = NULL;	// 頂点シェーダー
+	ID3D11PixelShader*	m_PixelShader = NULL;	// ピクセルシェーダー
+	ID3D11InputLayout*	m_VertexLayout = NULL;	// 入力レイアウト
 
-	static inline CallbackBase<>*		m_Callback = NULL;		// コールバック関数(シーンが切り替わった瞬間呼ばれる)
+	TransitionState		m_State = TransitionState::None;	// トランジションの状況
+	float				m_TimeCountSec = 0.0f;	// 経過時間
+	CallbackBase<>*		m_Callback = NULL;		// コールバック関数(シーンが切り替わった瞬間呼ばれる)
 
-private:
-	Transition() {}
 public:
-	static void Init();
-	static void Uninit();
-	static void Update();
-	static void Draw();
+	Transition(GameObject* attachObject)
+		: Draw2DComponent(attachObject)
+	{}
+	~Transition() {}
+
+	void Init();
+	void Uninit() override;
+	void Update() override;
+	void Draw2d() override;
 
 	// シーン切り替え前トランジション開始
-	static void StartTransitionOut(TransitionOption option);
+	void StartTransitionOut();
 
 	// シーン切り替え後トランジション開始
-	static void StartTransitionIn();
+	void StartTransitionIn();
 
 	// ゲーム起動時のトランジションオプションを取得
 	static TransitionOption GetFirstTransitionOption();
+
+	// コールバックを設定
+	template<class T>
+	void SetCallback(T* origin, void(T::* function)())
+	{
+		m_Callback = DBG_NEW Callback(origin, function);
+	}
 
 	/////////////////////////////
 	//　↓↓　アクセサ　↓↓　//
 	static void SetTransitionOption(TransitionOption option) { m_Option = option; }
 
-	static TransitionState GetTransitionState() { return m_State; }
-
-	// コールバックを設定
-	template<class T>
-	static void SetCallback(T* origin, void(T::* function)())
-	{
-		m_Callback = DBG_NEW Callback(origin, function);
-	}
+	TransitionState GetTransitionState() { return m_State; }
 	/////////////////////////////
 private:
 	// 頂点情報を生成
-	static void CreateVertex(VERTEX_3D* vertex, float alpha);
-	static void CreateVertex_WipeLeft(VERTEX_3D* vertex, float rate);
-	static void CreateVertex_WipeRight(VERTEX_3D* vertex, float rate);
+	void CreateVertex(VERTEX_3D* vertex, float alpha);
+	void CreateVertex_WipeLeft(VERTEX_3D* vertex, float rate);
+	void CreateVertex_WipeRight(VERTEX_3D* vertex, float rate);
 
 	// 描画処理
-	static void Draw_Fade();
-	static void Draw_Wipe();
+	void Draw_Fade();
+	void Draw_Wipe();
 };

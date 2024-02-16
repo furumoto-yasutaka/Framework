@@ -9,6 +9,7 @@
 #include "main.h"
 #include "component.h"
 #include "manager.h"
+#include "renderer.h"
 
 #include <list>
 #include <vector>

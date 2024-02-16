@@ -35,17 +35,18 @@ public:
 
 		m_NextScene = DBG_NEW T();
 
+		Transition::SetTransitionOption(info);
+
+		// シーンが存在する(exe起動直後ではない)場合
+		// 遷移前トランジションを行う
 		if (m_Scene)
-		{// シーンが存在する場合
-			// 通常の遷移
-			Transition::StartTransitionOut(info);
-		}
-		else
-		{// シーンが存在しない場合
-			// ゲーム起動直後ということなのでフェードアウトはせず、遷移設定を反映する
-			Transition::SetTransitionOption(info);
+		{
+			SetTransition_In();
 		}
 	}
+
+	// トランジション用ゲームオブジェクトを生成する
+	static Transition* SetTransition_In();
 
 	// シーン遷移を行うか確認
 	static void CheckScene();

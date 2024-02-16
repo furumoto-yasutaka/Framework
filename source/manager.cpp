@@ -18,6 +18,8 @@
 #include "skyDome.h"
 #include "savedataManager.h"
 #include "collision3dManager.h"
+
+#include "gameObject.h"
 #include "collider3d.h"
 
 #ifdef _DEBUG
@@ -42,8 +44,8 @@ void Manager::Init(HINSTANCE hInstance)
 	TextureContainer::Init();
 	ModelContainer::Init();
 	AudioContainer::Init();
-	SkyDome::Init();
-	Transition::Init();
+	//SkyDome::Init();
+	//Transition::Init();
 	SavedataManager::Init();
 	Collision3DManager::Init(0, D3DXVECTOR3(-60.0f, -60.0f, -60.0f), D3DXVECTOR3(120.0f, 120.0f, 120.0f));
 
@@ -75,8 +77,8 @@ void Manager::Uninit()
 #endif
 	Collision3DManager::Uninit();
 	SavedataManager::Uninit();
-	Transition::Uninit();
-	SkyDome::Uninit();
+	//Transition::Uninit();
+	//SkyDome::Uninit();
 	AudioContainer::Uninit();
 	ModelContainer::Uninit();
 	TextureContainer::Uninit();
@@ -136,8 +138,8 @@ void Manager::Draw()
 void Manager::CheckScene()
 {
 	// —\–ñ‚ª–³‚¢ê‡‚Ü‚½‚Íƒgƒ‰ƒ“ƒWƒVƒ‡ƒ“’†‚Ìê‡‚Í‘JˆÚ‚¹‚¸I—¹‚·‚é
-	if (!m_NextScene ||
-		Transition::GetTransitionState() == Transition::TransitionState::Out)
+	if (!m_NextScene/* ||
+		Transition::GetTransitionState() == Transition::TransitionState::Out*/)
 	{ return; }
 
 	//------------------------
@@ -156,7 +158,7 @@ void Manager::CheckScene()
 
 	// ‰Šú‰»
 	m_Scene->Init();
-	Transition::StartTransitionIn();
+	//Transition::StartTransitionIn();
 }
 
 /*******************************************************************************
@@ -166,4 +168,11 @@ void Manager::SetInitialScene()
 {
 	SetScene<DevelopLogo>(Transition::GetFirstTransitionOption());
 	CheckScene();
+}
+
+void Manager::SetTransition_In()
+{
+	GameObject* obj = m_Scene->AddGameObject("Transition");
+	Transition* transition = obj->AddComponent<Transition>();
+	transition->Init();
 }

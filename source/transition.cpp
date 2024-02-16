@@ -8,6 +8,7 @@
 #include "transition.h"
 #include "texture.h"
 #include "time.h"
+#include "gameObject.h"
 
 #include <string>
 
@@ -70,12 +71,6 @@ void Transition::Update()
 		}
 		return;
 	}
-	// ロードが行われるフレームは何もしない
-	if (m_IsLoadFrame)
-	{
-		m_IsLoadFrame = false;
-		return;
-	}
 
 	// 経過時間を加算
 	m_TimeCountSec += Time::GetDeltaTimeSec();	// ミリ秒から秒に変換
@@ -90,11 +85,13 @@ void Transition::Update()
 		else
 		{
 			m_State = TransitionState::None;
+			// 遷移が終わったらオブジェクトごとコンポーネントを削除する
+			m_AttachObject->SetDestroy();
 		}
 	}
 }
 
-void Transition::Draw()
+void Transition::Draw2d()
 {
 	// テクスチャがロードされているか確認
 	if (m_State == TransitionState::None)
@@ -119,19 +116,19 @@ void Transition::Draw()
 /*******************************************************************************
 *	シーン切り替え前トランジション開始
 *******************************************************************************/
-void Transition::StartTransitionOut(TransitionOption option)
+void Transition::StartTransitionOut()
 {
 	if (m_State == TransitionState::In)
 	{
 		float remainRate = (1.0f - m_TimeCountSec / m_Option.TimeLimitSec[(int)TransitionState::In]);
-		m_TimeCountSec = remainRate * option.TimeLimitSec[(int)TransitionState::Out];
+		m_TimeCountSec = remainRate * m_Option.TimeLimitSec[(int)TransitionState::Out];
 	}
 	else
 	{
 		m_TimeCountSec = 0.0f;
 	}
 
-	m_Option = option;
+	m_Option = m_Option;
 	m_State = TransitionState::Out;
 }
 
@@ -151,7 +148,6 @@ void Transition::StartTransitionIn()
 	}
 
 	m_State = TransitionState::In;
-	m_IsLoadFrame = true;
 
 	// コールバック関数呼出
 	if (m_Callback)
