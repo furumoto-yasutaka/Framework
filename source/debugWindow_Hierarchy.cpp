@@ -10,7 +10,6 @@
 #include "gameObject.h"
 #include "math.h"
 
-#include <list>
 #include <algorithm>
 
 void DebugWindow_Hierarchy::Draw()
@@ -18,11 +17,7 @@ void DebugWindow_Hierarchy::Draw()
 	// リストをクリア
 	m_ObjList.clear();
 
-	ImGui::SetNextWindowPos(m_WindowPos, ImGuiCond_Once);
-	ImGui::SetNextWindowSize(m_WindowSize, ImGuiCond_Once);
-
-	// 座標固定設定でウィンドウを表示
-	ImGui::Begin(m_WindowName.c_str(), ((bool*)0), ImGuiWindowFlags_HorizontalScrollbar);
+	BeginWindow();
 
 	list<GameObject*> objList = Manager::GetScene()->GetGameObjectAll();
 
@@ -31,20 +26,7 @@ void DebugWindow_Hierarchy::Draw()
 		CountDigit(objList.size());
 
 		// 描画処理
-		for (GameObject* obj : objList)
-		{
-			if (!obj->GetParent())
-			{
-				if (!obj->GetChild(0))
-				{// 子供が存在しない
-					DrawName(obj);
-				}
-				else
-				{// 子供が存在する
-					DrawTree(obj);
-				}
-			}
-		}
+		DrawObjList(objList);
 	}
 	else
 	{
@@ -56,7 +38,19 @@ void DebugWindow_Hierarchy::Draw()
 }
 
 /*******************************************************************************
-*	オブジェクト数から最大桁数を求める
+*	ウィンドウを作る
+*******************************************************************************/
+void DebugWindow_Hierarchy::BeginWindow()
+{
+	ImGui::SetNextWindowPos(m_WindowPos, ImGuiCond_Once);
+	ImGui::SetNextWindowSize(m_WindowSize, ImGuiCond_Once);
+
+	// 座標固定設定でウィンドウを表示
+	ImGui::Begin(m_WindowName.c_str(), ((bool*)0), ImGuiWindowFlags_HorizontalScrollbar);
+}
+
+/*******************************************************************************
+*	オブジェクト数の桁数を求める
 *******************************************************************************/
 void DebugWindow_Hierarchy::CountDigit(int num)
 {
@@ -70,6 +64,27 @@ void DebugWindow_Hierarchy::CountDigit(int num)
 }
 
 /*******************************************************************************
+*	オブジェクトをすべて表示する
+*******************************************************************************/
+void DebugWindow_Hierarchy::DrawObjList(list<GameObject*> objList)
+{
+	for (GameObject* obj : objList)
+	{
+		if (!obj->GetParent())
+		{
+			if (!obj->GetChild(0))
+			{// 子供が存在しない
+				DrawName(obj);
+			}
+			else
+			{// 子供が存在する
+				DrawTree(obj);
+			}
+		}
+	}
+}
+
+/*******************************************************************************
 *	子を持つオブジェクトを表示
 *******************************************************************************/
 void DebugWindow_Hierarchy::DrawTree(GameObject* obj)
@@ -78,19 +93,22 @@ void DebugWindow_Hierarchy::DrawTree(GameObject* obj)
 
 	if (!obj->GetIsActive())
 	{
+		// 非アクティブの場合灰色文字で表示
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
 	}
 
 	ImGui::RadioButton(CreateNumStr(m_ObjList.size() - 1).c_str(), &m_SelectedObjectId, m_ObjList.size() - 1);
 
 	ImGui::SameLine();
-	if (ImGui::TreeNode(obj->GetName().c_str()))
-	{// リストを展開している
-		if (!obj->GetIsActive())
-		{
-			ImGui::PopStyleColor();
-		}
+	bool isDeploy = ImGui::TreeNode(obj->GetName().c_str());
 
+	if (!obj->GetIsActive())
+	{
+		ImGui::PopStyleColor();
+	}
+
+	if (isDeploy)
+	{// リストを展開している
 		for (GameObject* child : obj->GetChildList())
 		{
 			if (!child->GetChild(0))
@@ -107,11 +125,6 @@ void DebugWindow_Hierarchy::DrawTree(GameObject* obj)
 	}
 	else
 	{// リストを展開していない
-		if (!obj->GetIsActive())
-		{
-			ImGui::PopStyleColor();
-		}
-
 		for (GameObject* child : obj->GetChildList())
 		{
 			PushChild(child);
@@ -188,7 +201,7 @@ string DebugWindow_Hierarchy::CreateNumStr(int num)
 }
 
 /*******************************************************************************
-*	選択オブジェクトが有効か確認
+*	オブジェクトをヒエラルキーから削除
 *******************************************************************************/
 void DebugWindow_Hierarchy::DeleteObj(GameObject* obj)
 {

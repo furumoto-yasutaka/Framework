@@ -637,13 +637,13 @@ void GameObject::UninitDebug()
 	m_VertexLayout->Release();
 }
 
-void GameObject::DrawDebugParentLine2d()
-{
-	if (m_AttachDraw2dComponentCount > 0)
-	{
-		DrawDebugParentLine();
-	}
-}
+//void GameObject::DrawDebugParentLine2d()
+//{
+//	if (m_AttachDraw2dComponentCount > 0)
+//	{
+//		DrawDebugParentLine();
+//	}
+//}
 
 void GameObject::DrawDebugParentLine3d()
 {

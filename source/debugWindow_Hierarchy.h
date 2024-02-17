@@ -9,6 +9,7 @@
 #pragma once
 #include "debugWindow.h"
 
+#include <list>
 #include <vector>
 #include <optional>
 #include <string>
@@ -35,8 +36,14 @@ public:
 
 	void Draw() override;
 
+	// ウィンドウを作る
+	void BeginWindow();
+
 	// オブジェクト数から最大桁数を求める
 	void CountDigit(int num);
+
+	// オブジェクトをすべて表示する
+	void DrawObjList(list<GameObject*> objList);
 
 	// 子を持つオブジェクトを表示
 	void DrawTree(GameObject* obj);

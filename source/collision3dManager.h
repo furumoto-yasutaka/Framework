@@ -74,6 +74,12 @@ private:
 	static void UninitDebug();
 	static void DrawDebug();
 	static void CreateVertex(VERTEX_3D* vertex);
+	static void CreateVertex_X(VERTEX_3D* vertex, int& index, float rate,
+		D3DXVECTOR3 n, D3DXCOLOR d, D3DXVECTOR2 c);
+	static void CreateVertex_Y(VERTEX_3D* vertex, int& index, float rate,
+		D3DXVECTOR3 n, D3DXCOLOR d, D3DXVECTOR2 c);
+	static void CreateVertex_Z(VERTEX_3D* vertex, int& index, float rate,
+		D3DXVECTOR3 n, D3DXCOLOR d, D3DXVECTOR2 c);
 
 public:
 	static inline void AddCollisionCount() { m_CollisionCount++; }

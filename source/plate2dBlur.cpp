@@ -26,22 +26,8 @@ void Plate2DBlur::Init(Plate2DRenderer* plate2D, unsigned int bulrLayer,
 	m_BulrAlphaDecayRate = 1.0f / (m_BulrLayer * interpolationLayer);
 	m_InterpolationLayer = interpolationLayer;
 
-	//-------------------
-	// バッファ設定
-	//-------------------
-	D3D11_BUFFER_DESC bd;
-	ZeroMemory(&bd, sizeof(bd));
-	bd.ByteWidth = sizeof(VERTEX_3D) * 4;
-	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bd.Usage = D3D11_USAGE_DYNAMIC;
-	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-
-	// バッファ生成
-	Renderer::GetDevice()->CreateBuffer(&bd, NULL, &m_VertexBuffer);
-
-	// シェーダー設定
-	Renderer::CreateVertexShader(&m_VertexShader, &m_VertexLayout, "unlitTextureVS.cso");
-	Renderer::CreatePixelShader(&m_PixelShader, "unlitTexturePS.cso");
+	CreateBuffer();
+	CreateShader();
 }
 
 void Plate2DBlur::Uninit()
@@ -56,39 +42,11 @@ void Plate2DBlur::Update()
 {
 	if (m_FrameCount >= m_BulrInterval)
 	{
-		// ブラーが最大数の場合最後に生成したブラーを削除する
-		if ((signed)m_BulrPosition.size() == m_BulrLayer)
-		{
-			m_BulrPosition.pop_back();
-			m_BulrRotationZ.pop_back();
-			
-			for (int i = 0; i < m_InterpolationLayer; i++)
-			{
-				m_BulrPosition.pop_back();
-				m_BulrRotationZ.pop_back();
-			}
-		}
+		// ブラーが最大数の場合最初に生成したブラーを削除する
+		ClearBackBulr();
 
 		// ブラーを追加する
-		m_BulrPosition.push_front({ m_AttachObject->GetWorldPosition().x, m_AttachObject->GetWorldPosition().y });
-		m_BulrRotationZ.push_front(Math::QuaternionToEulerAngle(m_AttachObject->GetWorldRotation()).z);
-
-		// 補正ブラーも追加する
-		auto posItr = m_BulrPosition.rbegin();
-		auto posItrNext = posItr; posItrNext++;
-		D3DXVECTOR2 divPosRate = *posItrNext - *posItr;
-		divPosRate /= (float)(m_InterpolationLayer + 1);
-
-		auto rotItr = m_BulrRotationZ.rbegin();
-		auto rotItrNext = rotItr; rotItrNext++;
-		float divRotRate = *rotItrNext - *rotItr;
-		divRotRate /= (float)(m_InterpolationLayer + 1);
-
-		for (int i = 0; i < m_InterpolationLayer; i++)
-		{
-			m_BulrPosition.push_front(*posItr + divPosRate * (float)i);
-			m_BulrRotationZ.push_front(*rotItr + divRotRate * (float)i);
-		}
+		CreateBulr();
 	}
 
 	m_FrameCount++;
@@ -96,6 +54,8 @@ void Plate2DBlur::Update()
 
 void Plate2DBlur::Draw2d()
 {
+	if (!m_Plate2DRenderer->GetTexture()) { return; }
+
 	auto posItr = m_BulrPosition.rbegin();
 	auto rotItr = m_BulrRotationZ.rbegin();
 	int i = 0;
@@ -132,6 +92,80 @@ void Plate2DBlur::Draw2d()
 
 		// ポリゴン描画
 		Renderer::GetDeviceContext()->Draw(4, 0);
+	}
+}
+
+/*******************************************************************************
+*	バッファ設定
+*******************************************************************************/
+void Plate2DBlur::CreateBuffer()
+{
+	D3D11_BUFFER_DESC bd;
+	ZeroMemory(&bd, sizeof(bd));
+	bd.ByteWidth = sizeof(VERTEX_3D) * 4;
+	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bd.Usage = D3D11_USAGE_DYNAMIC;
+	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+	// バッファ生成
+	Renderer::GetDevice()->CreateBuffer(&bd, NULL, &m_VertexBuffer);
+}
+
+/*******************************************************************************
+*	シェーダー設定
+*******************************************************************************/
+void Plate2DBlur::CreateShader()
+{
+	// シェーダー設定
+	Renderer::CreateVertexShader(&m_VertexShader, &m_VertexLayout, "unlitTextureVS.cso");
+	Renderer::CreatePixelShader(&m_PixelShader, "unlitTexturePS.cso");
+}
+
+/*******************************************************************************
+*	最初に生成したブラーを削除する
+*******************************************************************************/
+void Plate2DBlur::ClearBackBulr()
+{
+	// ブラーが最大数の場合最初に生成したブラーを削除する
+	if ((signed)m_BulrPosition.size() == m_BulrLayer)
+	{
+		m_BulrPosition.pop_back();
+		m_BulrRotationZ.pop_back();
+
+		for (int i = 0; i < m_InterpolationLayer; i++)
+		{
+			m_BulrPosition.pop_back();
+			m_BulrRotationZ.pop_back();
+		}
+	}
+}
+
+/*******************************************************************************
+*	ブラーを追加
+*******************************************************************************/
+void Plate2DBlur::CreateBulr()
+{
+	m_BulrPosition.push_front({ m_AttachObject->GetWorldPosition().x, m_AttachObject->GetWorldPosition().y });
+	m_BulrRotationZ.push_front(Math::QuaternionToEulerAngle(m_AttachObject->GetWorldRotation()).z);
+
+	// 前フレームと現在フレームの間の動きを補完するようにブラーを追加
+	auto posItr = m_BulrPosition.rbegin();
+	auto posItrNext = posItr;
+	posItrNext++;
+	D3DXVECTOR2 divPosRate = *posItrNext - *posItr;
+	divPosRate /= (float)(m_InterpolationLayer + 1);
+
+	auto rotItr = m_BulrRotationZ.rbegin();
+	auto rotItrNext = rotItr;
+	rotItrNext++;
+	float divRotRate = *rotItrNext - *rotItr;
+	divRotRate /= (float)(m_InterpolationLayer + 1);
+
+	// 補完ブラー
+	for (int i = 0; i < m_InterpolationLayer; i++)
+	{
+		m_BulrPosition.push_front(*posItr + divPosRate * (float)i);
+		m_BulrRotationZ.push_front(*rotItr + divRotRate * (float)i);
 	}
 }
 

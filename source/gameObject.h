@@ -226,7 +226,7 @@ public:
 	void DrawInspector();
 	void InitDebug();
 	void UninitDebug();
-	void DrawDebugParentLine2d();
+	//void DrawDebugParentLine2d();
 	void DrawDebugParentLine3d();
 private:
 	void DrawDebugParentLine();

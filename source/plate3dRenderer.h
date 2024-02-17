@@ -68,6 +68,9 @@ public:
 	void SetDestroy() override;
 
 private:
+	void CreateBuffer();
+	void CreateShader();
+
 	// ’¸“_î•ñ‚ğæ“¾
 	void GetVertex(VERTEX_3D* vertex);
 

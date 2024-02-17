@@ -22,5 +22,8 @@ public:
 	~DebugWindow_SceneInspector() {}
 
 	void Draw() override;
+
+	// ウィンドウを作る
+	void BeginWindow();
 };
 #endif

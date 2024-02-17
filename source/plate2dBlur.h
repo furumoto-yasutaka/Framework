@@ -44,6 +44,14 @@ public:
 	void Draw2d() override;
 
 private:
+	void CreateBuffer();
+	void CreateShader();
+
+	// 最初に生成したブラーを削除する
+	void ClearBackBulr();
+	// ブラーを追加
+	void CreateBulr();
+
 	// 頂点情報を取得
 	void GetVertex(VERTEX_3D* vertex, D3DXVECTOR2 pos, float alpha, float rot);
 

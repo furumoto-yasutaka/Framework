@@ -515,23 +515,15 @@ void AABBCollider3D::CreateVertex(VERTEX_3D* vertex, int index, D3DXVECTOR3 vert
 	D3DXVECTOR2 c = D3DXVECTOR2(0.0f, 0.0f);
 
 	vertex[0].Position = vertexPos[0][index];
-	vertex[0].Normal = n;
-	vertex[0].Diffuse = d;
-	vertex[0].TexCoord = c;
-
 	vertex[1].Position = vertexPos[0][next];
-	vertex[1].Normal = n;
-	vertex[1].Diffuse = d;
-	vertex[1].TexCoord = c;
-
 	vertex[2].Position = vertexPos[1][next];
-	vertex[2].Normal = n;
-	vertex[2].Diffuse = d;
-	vertex[2].TexCoord = c;
-
 	vertex[3].Position = vertexPos[1][index];
-	vertex[3].Normal = n;
-	vertex[3].Diffuse = d;
-	vertex[3].TexCoord = c;
+
+	for (int i = 0; i < 4; i++)
+	{
+		vertex[i].Normal = n;
+		vertex[i].Diffuse = d;
+		vertex[i].TexCoord = c;
+	}
 }
 #endif

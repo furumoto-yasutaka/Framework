@@ -16,28 +16,8 @@ void Transition::Init()
 	// 初期化
 	m_State = TransitionState::None;
 
-	//-------------------
-	// バッファ設定
-	//-------------------
-	D3D11_BUFFER_DESC bd;
-	ZeroMemory(&bd, sizeof(bd));
-	bd.Usage = D3D11_USAGE_DYNAMIC;
-	bd.ByteWidth = sizeof(VERTEX_3D) * 4;
-	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-
-	VERTEX_3D vertex[4];
-	CreateVertex(vertex, 1.0f);
-	D3D11_SUBRESOURCE_DATA sd;
-	ZeroMemory(&sd, sizeof(sd));
-	sd.pSysMem = vertex;
-
-	// バッファ生成
-	Renderer::GetDevice()->CreateBuffer(&bd, NULL, &m_VertexBuffer);
-
-	// シェーダー設定
-	Renderer::CreateVertexShader(&m_VertexShader, &m_VertexLayout, "unlitTextureVS.cso");
-	Renderer::CreatePixelShader(&m_PixelShader, "unlitTexturePS.cso");
+	CreateBuffer();
+	CreateShader();
 }
 
 void Transition::Uninit()
@@ -114,6 +94,37 @@ void Transition::Draw()
 		Draw_Wipe();
 		break;
 	}
+}
+
+/*******************************************************************************
+*	バッファ設定
+*******************************************************************************/
+void Transition::CreateBuffer()
+{
+	D3D11_BUFFER_DESC bd;
+	ZeroMemory(&bd, sizeof(bd));
+	bd.Usage = D3D11_USAGE_DYNAMIC;
+	bd.ByteWidth = sizeof(VERTEX_3D) * 4;
+	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+	VERTEX_3D vertex[4];
+	CreateVertex(vertex, 1.0f);
+	D3D11_SUBRESOURCE_DATA sd;
+	ZeroMemory(&sd, sizeof(sd));
+	sd.pSysMem = vertex;
+
+	// バッファ生成
+	Renderer::GetDevice()->CreateBuffer(&bd, NULL, &m_VertexBuffer);
+}
+
+/*******************************************************************************
+*	シェーダー設定
+*******************************************************************************/
+void Transition::CreateShader()
+{
+	Renderer::CreateVertexShader(&m_VertexShader, &m_VertexLayout, "unlitTextureVS.cso");
+	Renderer::CreatePixelShader(&m_PixelShader, "unlitTexturePS.cso");
 }
 
 /*******************************************************************************

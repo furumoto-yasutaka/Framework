@@ -103,7 +103,6 @@ void Scene::DrawCamera()
 		}
 	}
 
-
 	// Camera
 	for (auto itr : CameraComponent::GetGroupComponents())
 	{
@@ -155,21 +154,21 @@ void Scene::Draw2d()
 {
 	Renderer::SetWorldViewProjection2D();
 
-	// 2DDrawを持つゲームオブジェクト
-	for (auto itr : m_GameObject)
-	{
-		if (itr.second->GetIsActive())
-		{
-			itr.second->DrawDebugParentLine2d();
-		}
-	}
-	for (auto itr : m_StaticGameObject)
-	{
-		if (itr.second->GetIsActive())
-		{
-			itr.second->DrawDebugParentLine2d();
-		}
-	}
+	//// 2DDrawを持つゲームオブジェクト
+	//for (auto itr : m_GameObject)
+	//{
+	//	if (itr.second->GetIsActive())
+	//	{
+	//		itr.second->DrawDebugParentLine2d();
+	//	}
+	//}
+	//for (auto itr : m_StaticGameObject)
+	//{
+	//	if (itr.second->GetIsActive())
+	//	{
+	//		itr.second->DrawDebugParentLine2d();
+	//	}
+	//}
 
 	// Draw2D
 	for (auto itr : Draw2DComponent::GetDrawPriorityOrderComponents())
@@ -219,12 +218,13 @@ void Scene::CheckDestroy()
 	while (itr != m_GameObject.end())
 	{
 		if (itr->second->GetIsDestroy())
-		{
+		{// 削除する
 			itr->second->Destroy();
 			itr = m_GameObject.erase(itr);
 		}
 		else
-		{
+		{// 削除しない
+			// 各コンポーネントの削除確認
 			itr->second->CheckComponentDestroy();
 			itr++;
 		}
@@ -234,12 +234,13 @@ void Scene::CheckDestroy()
 	while (itr != m_StaticGameObject.end())
 	{
 		if (itr->second->GetIsDestroy())
-		{
+		{// 削除する
 			itr->second->Destroy();
 			itr = m_StaticGameObject.erase(itr);
 		}
 		else
-		{
+		{// 削除しない
+			// 各コンポーネントの削除確認
 			itr->second->CheckComponentDestroy();
 			itr++;
 		}

@@ -28,6 +28,9 @@ public:
 
 	void Draw() override;
 
+	// ウィンドウを作る
+	GameObject* BeginWindow(optional<int> index);
+
 	// ヒエラルキーウィンドウで選択状態になっているオブジェクトを表示
 	void DrawObjectInfo(GameObject* obj);
 };

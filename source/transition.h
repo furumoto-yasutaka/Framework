@@ -95,6 +95,9 @@ public:
 	}
 	/////////////////////////////
 private:
+	static void CreateBuffer();
+	static void CreateShader();
+
 	// ’¸“_î•ñ‚ğ¶¬
 	static void CreateVertex(VERTEX_3D* vertex, float alpha);
 	static void CreateVertex_WipeLeft(VERTEX_3D* vertex, float rate);

@@ -73,7 +73,7 @@ void SkyDome::DrawInspector()
 
 		ImGui::Text("PixelShaderName : %s", m_PixelShaderName.c_str());
 
-		ImGui::Text("PixelShaderName : %f", m_Size);
+		ImGui::Text("DomeSize : %f", m_Size);
 	}
 }
 #endif

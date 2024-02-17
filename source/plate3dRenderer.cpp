@@ -33,28 +33,8 @@ void Plate3DRenderer::Init(const char* textureName, D3DXVECTOR2 size,
 	m_TexCoordDistance.x = 1.0f / m_Texture->GetWidthDiv();
 	m_TexCoordDistance.y = 1.0f / m_Texture->GetHeightDiv();
 
-	//-------------------
-	// バッファ設定
-	//-------------------
-	D3D11_BUFFER_DESC bd;
-	ZeroMemory(&bd, sizeof(bd));
-	bd.ByteWidth = sizeof(VERTEX_3D) * 4;
-	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bd.Usage = D3D11_USAGE_DYNAMIC;
-	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-
-	VERTEX_3D vertex[4];
-	GetVertex(vertex);
-	D3D11_SUBRESOURCE_DATA sd;
-	ZeroMemory(&sd, sizeof(sd));
-	sd.pSysMem = vertex;
-
-	// バッファ生成
-	Renderer::GetDevice()->CreateBuffer(&bd, &sd, &m_VertexBuffer);
-
-	// シェーダー設定
-	Renderer::CreateVertexShader(&m_VertexShader, &m_VertexLayout, "unlitTextureVS.cso");
-	Renderer::CreatePixelShader(&m_PixelShader, "unlitTexturePS.cso");
+	CreateBuffer();
+	CreateShader();
 }
 
 void Plate3DRenderer::Uninit()
@@ -67,10 +47,7 @@ void Plate3DRenderer::Uninit()
 
 void Plate3DRenderer::Draw3d()
 {
-	if (!m_Texture)
-	{
-		return;
-	}
+	if (!m_Texture) { return; }
 
 	// テクスチャ情報更新
 	D3D11_MAPPED_SUBRESOURCE msr;
@@ -136,6 +113,37 @@ void Plate3DRenderer::Draw3d()
 
 	// ポリゴン描画
 	Renderer::GetDeviceContext()->Draw(4, 0);
+}
+
+/*******************************************************************************
+*	バッファ設定
+*******************************************************************************/
+void Plate3DRenderer::CreateBuffer()
+{
+	D3D11_BUFFER_DESC bd;
+	ZeroMemory(&bd, sizeof(bd));
+	bd.ByteWidth = sizeof(VERTEX_3D) * 4;
+	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bd.Usage = D3D11_USAGE_DYNAMIC;
+	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+	VERTEX_3D vertex[4];
+	GetVertex(vertex);
+	D3D11_SUBRESOURCE_DATA sd;
+	ZeroMemory(&sd, sizeof(sd));
+	sd.pSysMem = vertex;
+
+	// バッファ生成
+	Renderer::GetDevice()->CreateBuffer(&bd, &sd, &m_VertexBuffer);
+}
+
+/*******************************************************************************
+*	シェーダー設定
+*******************************************************************************/
+void Plate3DRenderer::CreateShader()
+{
+	Renderer::CreateVertexShader(&m_VertexShader, &m_VertexLayout, "unlitTextureVS.cso");
+	Renderer::CreatePixelShader(&m_PixelShader, "unlitTexturePS.cso");
 }
 
 /*******************************************************************************
@@ -227,26 +235,24 @@ void Plate3DRenderer::CreateVertex(VERTEX_3D* vertex, D3DXVECTOR2 offset)
 	else { n = m_AttachObject->GetForward(); }
 
 	vertex[0].Position = D3DXVECTOR3(offset.x, offset.y + m_Size.y, 0.0f);
-	vertex[0].Normal = n;
-	vertex[0].Diffuse = m_TexColor;
 	vertex[0].TexCoord = m_TexCoordBegin;
 
 	vertex[1].Position = D3DXVECTOR3(offset.x + m_Size.x, offset.y + m_Size.y, 0.0f);
-	vertex[1].Normal = n;
-	vertex[1].Diffuse = m_TexColor;
 	vertex[1].TexCoord = D3DXVECTOR2(m_TexCoordBegin.x + m_TexCoordDistance.x,
-		m_TexCoordBegin.y);
+									m_TexCoordBegin.y);
 
 	vertex[2].Position = D3DXVECTOR3(offset.x, offset.y, 0.0f);
-	vertex[2].Normal = n;
-	vertex[2].Diffuse = m_TexColor;
 	vertex[2].TexCoord = D3DXVECTOR2(m_TexCoordBegin.x,
-		m_TexCoordBegin.y + m_TexCoordDistance.y);
+									m_TexCoordBegin.y + m_TexCoordDistance.y);
 
 	vertex[3].Position = D3DXVECTOR3(offset.x + m_Size.x, offset.y, 0.0f);
-	vertex[3].Normal = n;
-	vertex[3].Diffuse = m_TexColor;
 	vertex[3].TexCoord = m_TexCoordBegin + m_TexCoordDistance;
+
+	for (int i = 0; i < 4; i++)
+	{
+		vertex[i].Normal = n;
+		vertex[i].Diffuse = m_TexColor;
+	}
 }
 
 #ifdef _DEBUG

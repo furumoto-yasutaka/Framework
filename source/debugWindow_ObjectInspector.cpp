@@ -10,29 +10,38 @@
 
 void DebugWindow_ObjectInspector::Draw()
 {
-	ImGui::SetNextWindowPos(m_WindowPos, ImGuiCond_Once);
-	ImGui::SetNextWindowSize(m_WindowSize, ImGuiCond_Once);
-
 	optional<int> index = DebugWindow_Hierarchy::GetSelectedObjectIndex();
-	string tempStr = m_WindowName + "	";
+	GameObject* selectedObj = BeginWindow(index);
 
 	if (index)
-	{// ヒエラルキーからオブジェクトが選択されている
-		GameObject* selectedObj = DebugWindow_Hierarchy::GetSelectedObject();
-		tempStr += to_string(index.value()) + " : " + selectedObj->GetName();
-
-		// 座標固定設定でウィンドウを表示
-		ImGui::Begin(tempStr.c_str(), ((bool*)0));
-
+	{
 		DrawObjectInfo(selectedObj);
-	}
-	else
-	{// ヒエラルキーからオブジェクトが選択されていない
-		// 座標固定設定でウィンドウを表示
-		ImGui::Begin(tempStr.c_str(), ((bool*)0));
 	}
 
 	ImGui::End();
+}
+
+/*******************************************************************************
+*	ウィンドウを作る
+*******************************************************************************/
+GameObject* DebugWindow_ObjectInspector::BeginWindow(optional<int> index)
+{
+	ImGui::SetNextWindowPos(m_WindowPos, ImGuiCond_Once);
+	ImGui::SetNextWindowSize(m_WindowSize, ImGuiCond_Once);
+
+	string tempStr = m_WindowName + "	";
+	GameObject* selectedObj = NULL;
+
+	if (index)
+	{// ヒエラルキーからオブジェクトが選択されている
+		selectedObj = DebugWindow_Hierarchy::GetSelectedObject();
+		tempStr += to_string(index.value()) + " : " + selectedObj->GetName();
+	}
+
+	// 座標固定設定でウィンドウを表示
+	ImGui::Begin(tempStr.c_str(), ((bool*)0));
+
+	return selectedObj;
 }
 
 /*******************************************************************************

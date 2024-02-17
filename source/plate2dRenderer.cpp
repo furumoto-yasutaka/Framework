@@ -30,28 +30,8 @@ void Plate2DRenderer::Init(const char* textureName,
 	m_TexCoordDistance.x = 1.0f / m_Texture->GetWidthDiv();
 	m_TexCoordDistance.y = 1.0f / m_Texture->GetHeightDiv();
 
-	//-------------------
-	// バッファ設定
-	//-------------------
-	D3D11_BUFFER_DESC bd;
-	ZeroMemory(&bd, sizeof(bd));
-	bd.ByteWidth = sizeof(VERTEX_3D) * 4;
-	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bd.Usage = D3D11_USAGE_DYNAMIC;
-	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-
-	VERTEX_3D vertex[4];
-	GetVertex(vertex);
-	D3D11_SUBRESOURCE_DATA sd;
-	ZeroMemory(&sd, sizeof(sd));
-	sd.pSysMem = vertex;
-
-	// バッファ生成
-	Renderer::GetDevice()->CreateBuffer(&bd, &sd, &m_VertexBuffer);
-
-	// シェーダー設定
-	Renderer::CreateVertexShader(&m_VertexShader, &m_VertexLayout, "unlitTextureVS.cso");
-	Renderer::CreatePixelShader(&m_PixelShader, "unlitTexturePS.cso");
+	CreateBuffer();
+	CreateShader();
 }
 void Plate2DRenderer::Uninit()
 {
@@ -64,10 +44,7 @@ void Plate2DRenderer::Uninit()
 }
 void Plate2DRenderer::Draw2d()
 {
-	if (!m_Texture)
-	{
-		return;
-	}
+	if (!m_Texture) { return; }
 
 	// テクスチャ情報更新
 	D3DXVECTOR3 p = m_AttachObject->m_LocalPosition;
@@ -98,6 +75,37 @@ void Plate2DRenderer::Draw2d()
 
 	// ポリゴン描画
 	Renderer::GetDeviceContext()->Draw(4, 0);
+}
+
+/*******************************************************************************
+*	バッファ設定
+*******************************************************************************/
+void Plate2DRenderer::CreateBuffer()
+{
+	D3D11_BUFFER_DESC bd;
+	ZeroMemory(&bd, sizeof(bd));
+	bd.ByteWidth = sizeof(VERTEX_3D) * 4;
+	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bd.Usage = D3D11_USAGE_DYNAMIC;
+	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+	VERTEX_3D vertex[4];
+	GetVertex(vertex);
+	D3D11_SUBRESOURCE_DATA sd;
+	ZeroMemory(&sd, sizeof(sd));
+	sd.pSysMem = vertex;
+
+	// バッファ生成
+	Renderer::GetDevice()->CreateBuffer(&bd, &sd, &m_VertexBuffer);
+}
+
+/*******************************************************************************
+*	シェーダー設定
+*******************************************************************************/
+void Plate2DRenderer::CreateShader()
+{
+	Renderer::CreateVertexShader(&m_VertexShader, &m_VertexLayout, "unlitTextureVS.cso");
+	Renderer::CreatePixelShader(&m_PixelShader, "unlitTexturePS.cso");
 }
 
 /*******************************************************************************
@@ -179,53 +187,64 @@ void Plate2DRenderer::GetVertex(VERTEX_3D* vertex)
 *******************************************************************************/
 void Plate2DRenderer::CreateVertex(VERTEX_3D* vertex, D3DXVECTOR2 offset)
 {
-	D3DXVECTOR2 p = { m_AttachObject->GetLocalPositionOrigin().x + offset.x, m_AttachObject->GetLocalPositionOrigin().y + offset.y };
+	D3DXVECTOR2 p;
 	D3DXVECTOR3 n = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	D3DXVECTOR2 rotOffsetPlus;
 	D3DXVECTOR2 rotOffsetMinus;
 
 	// 親の回転を反映
-	{
-		D3DXVECTOR2 localPos = { m_AttachObject->m_LocalPosition.x, m_AttachObject->m_LocalPosition.y };
-		float baseAngle = atan2f(localPos.x, localPos.y);
-		float len = D3DXVec2Length(&localPos);
-		float rot = Math::QuaternionToEulerAngle(m_AttachObject->GetLocalRotationOrigin()).z;
-		p += { sinf(baseAngle + rot) * len, cosf(baseAngle + rot) * len };
-	}
+	CalcParentRotate(p, offset);
 	// 自身の回転を反映
-	{
-		D3DXVECTOR3 s = m_AttachObject->GetWorldScale();
-		D3DXVECTOR2 halfScale = { m_Size.x * s.x * 0.5f, m_Size.y * s.y * 0.5f };
-		float baseAngle = atan2f(halfScale.x, halfScale.y);
-		float len = D3DXVec2Length(&halfScale);
-		float rot = Math::QuaternionToEulerAngle(m_AttachObject->m_LocalRotation).z;
-		rotOffsetPlus = { sinf(baseAngle + rot) * len, cosf(baseAngle + rot) * len };
-		rotOffsetMinus = { sinf(baseAngle - rot) * len, cosf(baseAngle - rot) * len };
-	}
+	CalcThisRotate(rotOffsetPlus, rotOffsetMinus);
 
 	vertex[0].Position = D3DXVECTOR3(p.x - rotOffsetMinus.x, p.y - rotOffsetMinus.y, 0.0f);
-	vertex[0].Normal = n;
-	vertex[0].Diffuse = m_TexColor;
 	vertex[0].TexCoord = D3DXVECTOR2(m_TexCoordBegin.x,
-		m_TexCoordBegin.y);
+									m_TexCoordBegin.y);
 
 	vertex[1].Position = D3DXVECTOR3(p.x + rotOffsetPlus.x, p.y - rotOffsetPlus.y, 0.0f);
-	vertex[1].Normal = n;
-	vertex[1].Diffuse = m_TexColor;
 	vertex[1].TexCoord = D3DXVECTOR2(m_TexCoordBegin.x + m_TexCoordDistance.x,
-		m_TexCoordBegin.y);
+									m_TexCoordBegin.y);
 
 	vertex[2].Position = D3DXVECTOR3(p.x - rotOffsetPlus.x, p.y + rotOffsetPlus.y, 0.0f);
-	vertex[2].Normal = n;
-	vertex[2].Diffuse = m_TexColor;
 	vertex[2].TexCoord = D3DXVECTOR2(m_TexCoordBegin.x,
-		m_TexCoordBegin.y + m_TexCoordDistance.y);
+									m_TexCoordBegin.y + m_TexCoordDistance.y);
 
 	vertex[3].Position = D3DXVECTOR3(p.x + rotOffsetMinus.x, p.y + rotOffsetMinus.y, 0.0f);
-	vertex[3].Normal = n;
-	vertex[3].Diffuse = m_TexColor;
 	vertex[3].TexCoord = D3DXVECTOR2(m_TexCoordBegin.x + m_TexCoordDistance.x,
-		m_TexCoordBegin.y + m_TexCoordDistance.y);
+									m_TexCoordBegin.y + m_TexCoordDistance.y);
+
+	for (int i = 0; i < 4; i++)
+	{
+		vertex[i].Normal = n;
+		vertex[i].Diffuse = m_TexColor;
+	}
+}
+
+/*******************************************************************************
+*	親の回転を反映
+*******************************************************************************/
+void Plate2DRenderer::CalcParentRotate(D3DXVECTOR2& p, D3DXVECTOR2 offset)
+{
+	p = { m_AttachObject->GetLocalPositionOrigin().x + offset.x, m_AttachObject->GetLocalPositionOrigin().y + offset.y };
+	D3DXVECTOR2 localPos = { m_AttachObject->m_LocalPosition.x, m_AttachObject->m_LocalPosition.y };
+	float baseAngle = atan2f(localPos.x, localPos.y);
+	float len = D3DXVec2Length(&localPos);
+	float rot = Math::QuaternionToEulerAngle(m_AttachObject->GetLocalRotationOrigin()).z;
+	p += { sinf(baseAngle + rot)* len, cosf(baseAngle + rot)* len };
+}
+
+/*******************************************************************************
+*	自身の回転を反映
+*******************************************************************************/
+void Plate2DRenderer::CalcThisRotate(D3DXVECTOR2& rotOffsetPlus, D3DXVECTOR2& rotOffsetMinus)
+{
+	D3DXVECTOR3 s = m_AttachObject->GetWorldScale();
+	D3DXVECTOR2 halfScale = { m_Size.x * s.x * 0.5f, m_Size.y * s.y * 0.5f };
+	float baseAngle = atan2f(halfScale.x, halfScale.y);
+	float len = D3DXVec2Length(&halfScale);
+	float rot = Math::QuaternionToEulerAngle(m_AttachObject->m_LocalRotation).z;
+	rotOffsetPlus = { sinf(baseAngle + rot) * len, cosf(baseAngle + rot) * len };
+	rotOffsetMinus = { sinf(baseAngle - rot) * len, cosf(baseAngle - rot) * len };
 }
 
 #ifdef _DEBUG

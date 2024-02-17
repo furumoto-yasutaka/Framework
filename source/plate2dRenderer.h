@@ -65,11 +65,16 @@ public:
 	void SetDestroy() override;
 
 private:
+	void CreateBuffer();
+	void CreateShader();
+
 	// ’¸“_î•ñ‚ğæ“¾
 	void GetVertex(VERTEX_3D* vertex);
 
 	// ’¸“_î•ñ‚ğ¶¬
 	void CreateVertex(VERTEX_3D* vertex, D3DXVECTOR2 offset);
+	void CalcParentRotate(D3DXVECTOR2& p, D3DXVECTOR2 offset);
+	void CalcThisRotate(D3DXVECTOR2& rotOffsetPlus, D3DXVECTOR2& rotOffsetMinus);
 
 public:
 	/////////////////////////////

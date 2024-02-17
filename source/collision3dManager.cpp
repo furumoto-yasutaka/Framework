@@ -394,72 +394,86 @@ void Collision3DManager::DrawDebug()
 
 void Collision3DManager::CreateVertex(VERTEX_3D* Vertex)
 {
-	int i, j, index;
-	index = 0;
+	int index = 0;
 	float rate = 1.0f / (m_Line - 1);
-
 	D3DXVECTOR3 n = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	D3DXCOLOR d = D3DXCOLOR(1.0f, 0.3f, 1.0f, 1.0f);
 	D3DXVECTOR2 c = D3DXVECTOR2(0.0f, 0.0f);
 
 	// XŽ²
-	for (i = 0; i < m_Line; i++)
-	{
-		for (j = 0; j < m_Line; j++)
-		{
-			Vertex[index].Position = m_Min + D3DXVECTOR3(0.0f, i * rate * m_Size.y, j * rate * m_Size.z);
-			Vertex[index].Normal = n;
-			Vertex[index].Diffuse = d;
-			Vertex[index].TexCoord = c;
-
-			index++;
-
-			Vertex[index].Position = m_Min + D3DXVECTOR3(m_Size.x, i * rate * m_Size.y, j * rate * m_Size.z);
-			Vertex[index].Normal = n;
-			Vertex[index].Diffuse = d;
-			Vertex[index].TexCoord = c;
-
-			index++;
-		}
-	}
-
+	CreateVertex_X(Vertex, index, rate, n, d, c);
 	// YŽ²
-	for (i = 0; i < m_Line; i++)
+	CreateVertex_Y(Vertex, index, rate, n, d, c);
+	// ZŽ²
+	CreateVertex_Z(Vertex, index, rate, n, d, c);
+}
+
+void Collision3DManager::CreateVertex_X(VERTEX_3D* vertex, int& index, float rate,
+	D3DXVECTOR3 n, D3DXCOLOR d, D3DXVECTOR2 c)
+{
+	for (int i = 0; i < m_Line; i++)
 	{
-		for (j = 0; j < m_Line; j++)
+		for (int j = 0; j < m_Line; j++)
 		{
-			Vertex[index].Position = m_Min + D3DXVECTOR3(i * rate * m_Size.x, 0.0f, j * rate * m_Size.z);
-			Vertex[index].Normal = n;
-			Vertex[index].Diffuse = d;
-			Vertex[index].TexCoord = c;
+			vertex[index].Position = m_Min + D3DXVECTOR3(0.0f, i * rate * m_Size.y, j * rate * m_Size.z);
+			vertex[index].Normal = n;
+			vertex[index].Diffuse = d;
+			vertex[index].TexCoord = c;
 
 			index++;
 
-			Vertex[index].Position = m_Min + D3DXVECTOR3(i * rate * m_Size.x, m_Size.y, j * rate * m_Size.z);
-			Vertex[index].Normal = n;
-			Vertex[index].Diffuse = d;
-			Vertex[index].TexCoord = c;
+			vertex[index].Position = m_Min + D3DXVECTOR3(m_Size.x, i * rate * m_Size.y, j * rate * m_Size.z);
+			vertex[index].Normal = n;
+			vertex[index].Diffuse = d;
+			vertex[index].TexCoord = c;
 
 			index++;
 		}
 	}
+}
 
-	// ZŽ²
-	for (i = 0; i < m_Line; i++)
+void Collision3DManager::CreateVertex_Y(VERTEX_3D* vertex, int& index, float rate,
+	D3DXVECTOR3 n, D3DXCOLOR d, D3DXVECTOR2 c)
+{
+	for (int i = 0; i < m_Line; i++)
 	{
-		for (j = 0; j < m_Line; j++)
+		for (int j = 0; j < m_Line; j++)
 		{
-			Vertex[index].Position = m_Min + D3DXVECTOR3(i * rate * m_Size.x, j * rate * m_Size.y, 0.0f);
-			Vertex[index].Normal = n;
-			Vertex[index].Diffuse = d;
-			Vertex[index].TexCoord = c;
+			vertex[index].Position = m_Min + D3DXVECTOR3(i * rate * m_Size.x, 0.0f, j * rate * m_Size.z);
+			vertex[index].Normal = n;
+			vertex[index].Diffuse = d;
+			vertex[index].TexCoord = c;
 
 			index++;
 
-			Vertex[index].Position = m_Min + D3DXVECTOR3(i * rate * m_Size.x, j * rate * m_Size.y, m_Size.z);
-			Vertex[index].Normal = n;
-			Vertex[index].Diffuse = d;
-			Vertex[index].TexCoord = c;
+			vertex[index].Position = m_Min + D3DXVECTOR3(i * rate * m_Size.x, m_Size.y, j * rate * m_Size.z);
+			vertex[index].Normal = n;
+			vertex[index].Diffuse = d;
+			vertex[index].TexCoord = c;
+
+			index++;
+		}
+	}
+}
+
+void Collision3DManager::CreateVertex_Z(VERTEX_3D* vertex, int& index, float rate,
+	D3DXVECTOR3 n, D3DXCOLOR d, D3DXVECTOR2 c)
+{
+	for (int i = 0; i < m_Line; i++)
+	{
+		for (int j = 0; j < m_Line; j++)
+		{
+			vertex[index].Position = m_Min + D3DXVECTOR3(i * rate * m_Size.x, j * rate * m_Size.y, 0.0f);
+			vertex[index].Normal = n;
+			vertex[index].Diffuse = d;
+			vertex[index].TexCoord = c;
+
+			index++;
+
+			vertex[index].Position = m_Min + D3DXVECTOR3(i * rate * m_Size.x, j * rate * m_Size.y, m_Size.z);
+			vertex[index].Normal = n;
+			vertex[index].Diffuse = d;
+			vertex[index].TexCoord = c;
 
 			index++;
 		}
